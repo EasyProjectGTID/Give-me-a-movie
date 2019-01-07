@@ -12,7 +12,7 @@ import time
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=DeprecationWarning)
     cachedStopWords = stopwords.words("french") + stopwords.words("english") #Permet une optimisation sinon NLTK réouvre à chaque fois le fichier contenant les stopwords
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password='1777888'")
+conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 cur = conn.cursor()
 
 

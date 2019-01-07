@@ -51,7 +51,7 @@ def analyseFile(filename, serie):
     conn.commit()
 
 def walk_sub():
-    conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password='1777888'")
+    conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost'")
     for root in os.scandir("G:\Desktop\sous-titres"):
 
         cur = conn.cursor()

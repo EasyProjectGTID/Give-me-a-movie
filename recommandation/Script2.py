@@ -6,24 +6,27 @@ from nltk.corpus import stopwords
 import operator
 from collections import Counter
 import time
-cachedStopWords = stopwords.words("french") + stopwords.words("english") #Permet une optimisation sinon NLTK réouvre à chaque fois le fichier contenant les stopwords
+
+cachedStopWords = stopwords.words("french") + stopwords.words(
+    "english")  # Permet une optimisation sinon NLTK réouvre à chaque fois le fichier contenant les stopwords
 
 
 def getWords(text):
     return re.compile('\w+').findall(text)
 
+
 def getKey(item):
     return item[1]
 
-def insertWordCount(word, seriePk):
 
+def insertWordCount(word, seriePk):
     cur.execute(
         "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word[0]))
     key_id = cur.fetchone()[0]
     cur.execute(
         "INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(word[1],
-                                                                                                             key_id,
-                                                                                                             seriePk))
+                                                                                                                key_id,
+                                                                                                                seriePk))
     conn.commit()
 
 
@@ -31,41 +34,37 @@ def insertSerie(serieName):
     cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(serieName))
     return cur.fetchone()[0]
 
-def ExtractWordsAndCount(filepath, seriePk):
 
+def ExtractWordsAndCount(filepath, seriePk):
     subs = pysrt.open(filepath, encoding='iso-8859-1')
     list = []
     string = ''
 
-    #Pour toutes les lignes dans le fichier de sous titre
+    # Pour toutes les lignes dans le fichier de sous titre
     for nbLine in range(len(subs)):
 
         for word in getWords(subs[nbLine].text):
             list.append(word.lower())
-            #string = string + ' ' + word # Recréer le text complet
+            # string = string + ' ' + word # Recréer le text complet
 
-
-    filtered_words = [word for word in list if word not in cachedStopWords] # Supprime les stopword
-    d = Counter(' '.join(filtered_words).split()) # Créer un dictionnaire type mot:nb de fois présent
-
+    filtered_words = [word for word in list if word not in cachedStopWords]  # Supprime les stopword
+    d = Counter(' '.join(filtered_words).split())  # Créer un dictionnaire type mot:nb de fois présent
 
     sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
 
-    #print(sorted_d)
+    # print(sorted_d)
     list = set()
 
     for x in sorted_d:
         list.add(x)
     list_sorted = sorted(list, key=getKey)
 
-
-    for word in list_sorted: # word type tuple avec ('word', 5)
+    for word in list_sorted:  # word type tuple avec ('word', 5)
 
         insertWordCount(word, seriePk)
 
 
 def walk_sub():
-
     for root in os.scandir("G:\Desktop\sous-titres"):
         seriepk = insertSerie(root.name)
         for files in os.scandir(root):
@@ -77,11 +76,8 @@ def walk_sub():
     conn.close()
 
 
-
-
-
 # nltk.download('stopwords')
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password='1777888'")
+conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password='")
 cur = conn.cursor()
 import time
 
@@ -89,4 +85,3 @@ start = time.time()
 walk_sub()
 end = time.time()
 print(end - start)
-
