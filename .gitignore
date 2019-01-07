@@ -1,0 +1,12 @@
+
+PTUT/__pycache__/
+
+venv/Lib/site-packages/__pycache__/
+
+venv/
+
+recommandation/__pycache__/
+
+recommandation/forms/__pycache__/
+
+*.pyc
