@@ -13,7 +13,7 @@ import operator
 from collections import Counter
 
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password='1777888'")
+conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 def getWords(text):
     return re.compile('\w+').findall(text)
 
@@ -31,7 +31,7 @@ def analyseFile(filename, serie):
             string = string + ' ' + j
 
 
-    # nltk.download('stopwords')
+
     filtered_words = [word for word in list if word not in cachedStopWords]
     d = Counter(' '.join(filtered_words).split())
 
@@ -51,23 +51,24 @@ def analyseFile(filename, serie):
     conn.commit()
 
 def walk_sub():
-    conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost'")
-    for root in os.scandir("G:\Desktop\sous-titres"):
+    for root in os.scandir("/home/hadrien/Bureau/sous-titres"):
 
         cur = conn.cursor()
         cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(root.name))
 
         serie_id = cur.fetchone()[0]
+        
         for files in os.scandir(root):
             if str(files.name)[-4:] == '.zip':
                 pass
             else:
 
-                analyseFile("G:\Desktop\sous-titres\\" + root.name + '/' + files.name, serie=serie_id)
+                analyseFile("/home/hadrien/Bureau/sous-titres/" + root.name + '/' + files.name, serie=serie_id)
     conn.close()
 import time
-
+import nltk
 start = time.time()
+#nltk.download('stopwords')
 walk_sub()
 
 end = time.time()

@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 from recommandation.forms.uploadForm import UploadFileForm
 from recommandation.models import Series, Posting, KeyWords
 
-from pymongo import MongoClient
+
 
 
 
