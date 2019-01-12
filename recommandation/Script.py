@@ -30,8 +30,6 @@ def analyseFile(filename, serie):
             list.append(j.lower())
             string = string + ' ' + j
 
-
-
     filtered_words = [word for word in list if word not in cachedStopWords]
     d = Counter(' '.join(filtered_words).split())
 
@@ -44,18 +42,23 @@ def analyseFile(filename, serie):
     list_sorted = sorted(list, key=getKey)
 
     for word in list_sorted[-100:]:
-        cur.execute(
-            "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word[0]))
-        key_id = cur.fetchone()[0]
+        try:
+            cur.execute(
+                "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word[0]))
+            key_id = cur.fetchone()[0]
+
+        except:
+            conn.rollback()
+            cur.execute("SELECT k.id from recommandation_keywords as k where k.key='{}'".format(word[0]))
+            key_id = cur.fetchone()[0]
         cur.execute("INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(word[1], key_id, serie))
-    conn.commit()
+        conn.commit()
 
 def walk_sub():
     for root in os.scandir("/home/hadrien/Bureau/sous-titres"):
-
         cur = conn.cursor()
         cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(root.name))
-
+        conn.commit()
         serie_id = cur.fetchone()[0]
         
         for files in os.scandir(root):
