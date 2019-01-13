@@ -6,7 +6,7 @@ from django.db import models
 
 
 class Series(models.Model):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, db_index=True)
     def __str__(self):
         return self.name
 
@@ -28,7 +28,7 @@ class Rating(models.Model):
 
 
 class KeyWords(models.Model):
-    key = models.CharField(max_length=200, unique=True)
+    key = models.CharField(max_length=200, unique=True, db_index=True)
     series = models.ManyToManyField(Series, through='Posting')
 
     def __str__(self):
@@ -36,8 +36,8 @@ class KeyWords(models.Model):
 
 class Posting(models.Model):
     number = models.IntegerField()
-    series = models.ForeignKey(Series, on_delete=models.PROTECT)
-    keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT)
+    series = models.ForeignKey(Series, on_delete=models.PROTECT, db_index=True)
+    keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True)
 
 
     def __str__(self):
