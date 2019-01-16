@@ -17,13 +17,16 @@ def getKey(item):
     return item[1]
 
 def analyseFile(liste_episode, serie):
+    start = time.time()
     cachedStopWords = stopwords.words("french") + stopwords.words("english")
     list = []
     string = ''
-
     stemmer = FrenchStemmer()
     for episode in liste_episode:
-        subs = pysrt.open(episode, encoding='iso-8859-1')
+        try:
+            subs = pysrt.open(episode, encoding='iso-8859-1')
+        except:
+            pass
 
         for i in range(len(subs)):
             for j in getWords(subs[i].text):
@@ -38,8 +41,10 @@ def analyseFile(liste_episode, serie):
     d = Counter(' '.join(filtered_words).split())
 
     sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
+    end = time.time()
+    print('Time :', end - start)
     cur = conn.cursor()
-
+    start2 = time.time()
     list = set()
     for x in sorted_d:
         list.add(x)
@@ -60,9 +65,11 @@ def analyseFile(liste_episode, serie):
                 "INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(
                     word[1], key_id, serie))
             conn.commit()
-
+    end2 = time.time()
+    print('Time2 :',end2 - start2)
 def walk_sub():
     for root in os.scandir("/home/hadrien/Bureau/sous-titres"):
+        print(root)
         start = time.time()
         cur = conn.cursor()
         cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(root.name))

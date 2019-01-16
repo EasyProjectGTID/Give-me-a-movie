@@ -1,9 +1,10 @@
 import os, zipfile
+import shutil
 
 folder = '/home/hadrien/Bureau/sous-titres'
 extension = ".zip"
 
-def allUnzip:()
+def allUnzip():
     for path, dir_list, file_list in os.walk(folder):
         print(file_list)
         for file_name in file_list:
@@ -25,3 +26,12 @@ def allUnzip:()
                     zip_obj.close()
                 except:
                     pass
+
+for src_dir, dirs, files in os.walk(folder):
+    for dir in dirs:
+
+        for files in os.walk(dir):
+            for file in files[2]:
+                    print(file)
+                    shutil.copy(src_dir+'/'+dir+'/'+file, folder +'/' + dir)
+

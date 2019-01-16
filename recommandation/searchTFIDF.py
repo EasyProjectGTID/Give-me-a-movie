@@ -48,7 +48,7 @@ cur = conn.cursor()
 
 from nltk.stem.snowball import FrenchStemmer
 stemmer = FrenchStemmer()
-mots = 'seduction amour'
+mots = 'sexe arme guerre police gang'
 liste_mots = mots.split(' ')
 print(liste_mots)
 
