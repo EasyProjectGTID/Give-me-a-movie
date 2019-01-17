@@ -10,3 +10,5 @@ recommandation/__pycache__/
 recommandation/forms/__pycache__/
 
 *.pyc
+
+\.idea/
