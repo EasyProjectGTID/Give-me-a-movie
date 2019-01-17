@@ -11,7 +11,7 @@ from nltk.stem.snowball import FrenchStemmer
 from flashtext.keyword import KeywordProcessor
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 from nltk import word_tokenize
-
+cachedStopWords = stopwords.words("french") + stopwords.words("english")
 def getWords(text):
     return re.findall('\w+', text)
 
@@ -19,23 +19,21 @@ def getKey(item):
     return item[1]
 
 
-def read_srt_files(serie):
-    cachedStopWords = stopwords.words("french") + stopwords.words("english")
+def read_srt_files(listSrt):
     stemmer = FrenchStemmer()
     list = []
     string = ''
     somme = 0
 
-    for episode in serie:
+    for episode in listSrt:
 
         subs = pysrt.open(episode, encoding='iso-8859-1')
 
+        for ligne in range(len(subs)):
+            for mot in getWords(subs[ligne].text):
+                if len(mot) > 2:
 
-        for i in range(len(subs)):
-            for j in getWords(subs[i].text):
-                if len(j) > 2:
-
-                    list.append(j.lower())
+                    list.append(mot.lower())
                     #string = string + ' ' + j
 
     filtered_words = []
@@ -69,10 +67,14 @@ def insertInDatabase(serie, d):
         cur.execute(
             "INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(
                 number, key_id, serie_id))
+        conn.commit()
+
 
 def walk_sub(directory):
+    """ Parcours du dossier de sous titres retourne un dictionnaire"""
     seriesPath = dict()
     for root in os.scandir(directory):
+
         listPath = []
         for racine, dir, files in os.walk(directory + root.name):
 
@@ -88,17 +90,18 @@ def walk_sub(directory):
 
 
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
-totals = time.time()
-for key, value in subs.items():
-     print(key, value)
-     start = time.time()
-     text = read_srt_files(value)
-     end = time.time()
-     print('read srt', end - start)
-     startbdd = time.time()
-     insertInDatabase(key, text)
-     endbdd = time.time()
-     #print('INSERT BDD', endbdd - startbdd)
 
-fin = time.time()
-print('total', end - start)
+# totals = time.time()
+for key, value in subs.items():
+
+#      start = time.time()
+       text = read_srt_files(value)
+#      end = time.time()
+#      print('read srt', end - start)
+#      startbdd = time.time()
+       insertInDatabase(key, text)
+#      endbdd = time.time()
+#      print('INSERT BDD', endbdd - startbdd)
+#
+# fin = time.time()
+# print('total', end - start)
