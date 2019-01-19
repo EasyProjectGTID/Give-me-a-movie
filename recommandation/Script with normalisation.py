@@ -1,8 +1,5 @@
 import fnmatch
-import multiprocessing
 import os
-from multiprocessing.pool import Pool
-
 import psycopg2
 import pysrt
 import re
@@ -11,35 +8,36 @@ import operator
 from collections import Counter
 import time
 from nltk.stem.snowball import FrenchStemmer
-
+from flashtext.keyword import KeywordProcessor
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
-
+from nltk import word_tokenize
+cachedStopWords = stopwords.words("french") + stopwords.words("english")
 def getWords(text):
     return re.findall('\w+', text)
 
 def getKey(item):
     return item[1]
 
+def calculTf(corpus, lenCorpus):
+    resultat = dict()
+    for word, number in corpus.items():
+        resultat[word] = (number, number / lenCorpus)
+    return resultat
 
-def read_srt_files(serie):
-    print(serie)
-    cachedStopWords = stopwords.words("french") + stopwords.words("english")
+def maxNB(corpus):
+    return corpus[max(corpus, key=corpus.get)]
+
+def read_srt_files(listSrt):
     stemmer = FrenchStemmer()
     list = []
-    string = ''
-    somme = 0
 
-    for episode in serie:
-
+    for episode in listSrt:
         subs = pysrt.open(episode, encoding='iso-8859-1')
+        for ligne in range(len(subs)):
+            for mot in getWords(subs[ligne].text):
+                if len(mot) > 2:
 
-        for i in range(len(subs)):
-
-            for j in getWords(subs[i].text):
-
-                if len(j) > 2:
-
-                    list.append(j.lower())
+                    list.append(mot.lower())
                     #string = string + ' ' + j
 
     filtered_words = []
@@ -47,18 +45,19 @@ def read_srt_files(serie):
         if word not in cachedStopWords:
             filtered_words.append(stemmer.stem(word))
 
-    d = Counter(' '.join(filtered_words).split())
+    corpus = Counter(' '.join(filtered_words).split())
+    maxi = maxNB(corpus)
+    corpusWithTf = calculTf(corpus, maxi)
+    return {'corpus':corpusWithTf, 'lenCorpus':maxi}
 
-    return d
+def insertInDatabase(serie, corpus, lenCorpus):
 
-def insertInDatabase(serie, d):
     cur = conn.cursor()
-    cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(serie))
+    cur.execute("INSERT INTO recommandation_series (name, corpus_size) VALUES ('{0}', '{1}') returning id".format(serie, lenCorpus))
     conn.commit()
     serie_id = cur.fetchone()[0]
 
-    for word, number in d.items():
-
+    for word, value in corpus.items():
         try:
             cur.execute(
                 "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word))
@@ -69,14 +68,17 @@ def insertInDatabase(serie, d):
             cur.execute("SELECT k.id from recommandation_keywords as k where k.key='{}'".format(word))
             key_id = cur.fetchone()[0]
 
-
         cur.execute(
-            "INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(
-                number, key_id, serie_id))
+            "INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
+                value[0], key_id, serie_id, value[1]))
+        conn.commit()
+
 
 def walk_sub(directory):
+    """ Parcours du dossier de sous titres retourne un dictionnaire"""
     seriesPath = dict()
     for root in os.scandir(directory):
+
         listPath = []
         for racine, dir, files in os.walk(directory + root.name):
 
@@ -88,29 +90,18 @@ def walk_sub(directory):
             seriesPath[root.name] = listPath
     return seriesPath
 
-
-
-
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
+
 totals = time.time()
-# for key, value in subs.items():
-#      print(key, value)
-#      start = time.time()
-#      text = read_srt_files(value)
-#      end = time.time()
-#      #print('read srt', end - start)
-#      startbdd = time.time()
-#      insertInDatabase(key, text)
-#      endbdd = time.time()
-#      #print('INSERT BDD', endbdd - startbdd)
+for key, value in subs.items():
+    start = time.time()
+    text = read_srt_files(value)
+    end = time.time()
+    print('read srt', end - start)
+    startbdd = time.time()
+    insertInDatabase(key, text['corpus'], text['lenCorpus'])
+    endbdd = time.time()
+    print('INSERT BDD', endbdd - startbdd)
 
-# fin = time.time()
-# print('total', end - start)
-start = time.time()
-p = Pool(4)
-p.map(read_srt_files, subs.values())
-
-p.close()
-p.join()
-end = time.time()
-print('time : ', end - start)
+fin = time.time()
+print('total', fin - totals)

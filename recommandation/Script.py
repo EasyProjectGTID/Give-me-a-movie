@@ -1,3 +1,4 @@
+import fnmatch
 import os
 import psycopg2
 import pysrt
@@ -10,86 +11,101 @@ from nltk.stem.snowball import FrenchStemmer
 
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 
+cachedStopWords = stopwords.words("french") + stopwords.words("english")
 def getWords(text):
-    return re.compile('\w+').findall(text)
+    return re.findall('\w+', text)
 
 def getKey(item):
     return item[1]
 
-def analyseFile(liste_episode, serie):
-    start = time.time()
-    cachedStopWords = stopwords.words("french") + stopwords.words("english")
-    list = []
-    string = ''
-    stemmer = FrenchStemmer()
-    for episode in liste_episode:
-        try:
-            subs = pysrt.open(episode, encoding='iso-8859-1')
-        except:
-            pass
+def calculTf(corpus, lenCorpus):
+    resultat = dict()
+    for word, number in corpus.items():
+        resultat[word] = (number, number / lenCorpus)
+    return resultat
 
-        for i in range(len(subs)):
-            for j in getWords(subs[i].text):
-                list.append(j.lower())
-                string = string + ' ' + j
+def lenCorpus(corpus):
+    len = 0
+    for word in corpus:
+        len = len +corpus[word]
+    return len
+
+def read_srt_files(listSrt):
+    stemmer = FrenchStemmer()
+    list = []
+
+    for episode in listSrt:
+        subs = pysrt.open(episode, encoding='iso-8859-1')
+        for ligne in range(len(subs)):
+            for mot in getWords(subs[ligne].text):
+                if len(mot) > 2:
+                    list.append(mot.lower())
+
+
     filtered_words = []
     for word in list:
         if word not in cachedStopWords:
             filtered_words.append(stemmer.stem(word))
-    # filtered_words = [word for word in list if word not in cachedStopWords]
-    # print(filtered_words)
-    d = Counter(' '.join(filtered_words).split())
 
-    sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
-    end = time.time()
-    print('Time :', end - start)
+    corpus = Counter(' '.join(filtered_words).split())
+    l = lenCorpus(corpus)
+    corpusWithTf = calculTf(corpus, l)
+    return {'corpus':corpusWithTf, 'lenCorpus':l}
+
+def insertInDatabase(serie, corpus, lenCorpus):
+
     cur = conn.cursor()
-    start2 = time.time()
-    list = set()
-    for x in sorted_d:
-        list.add(x)
-    list_sorted = sorted(list, key=getKey)
-    for word in list_sorted:
-        if len(word[0]) > 2:
-            try:
-                cur.execute(
-                    "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word[0]))
-                key_id = cur.fetchone()[0]
-                conn.commit()
-            except Exception as e:
-                conn.rollback()
-                cur.execute("SELECT k.id from recommandation_keywords as k where k.key='{}'".format(word[0]))
-                key_id = cur.fetchone()[0]
+    cur.execute("INSERT INTO recommandation_series (name, corpus_size) VALUES ('{0}', '{1}') returning id".format(serie, lenCorpus))
+    conn.commit()
+    serie_id = cur.fetchone()[0]
 
+    for word, value in corpus.items():
+        try:
             cur.execute(
-                "INSERT INTO recommandation_posting (number, keywords_id, series_id) VALUES ('{0}','{1}','{2}')".format(
-                    word[1], key_id, serie))
+                "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word))
+            key_id = cur.fetchone()[0]
             conn.commit()
-    end2 = time.time()
-    print('Time2 :',end2 - start2)
-def walk_sub():
-    for root in os.scandir("/home/hadrien/Bureau/sous-titres"):
-        print(root)
-        start = time.time()
-        cur = conn.cursor()
-        cur.execute("INSERT INTO recommandation_series (name) VALUES ('{}') returning id".format(root.name))
+        except Exception as e:
+            conn.rollback()
+            cur.execute("SELECT k.id from recommandation_keywords as k where k.key='{}'".format(word))
+            key_id = cur.fetchone()[0]
+
+
+        cur.execute(
+            "INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
+                value[0], key_id, serie_id, value[1]))
         conn.commit()
-        serie_id = cur.fetchone()[0]
-        liste_episode = []
-        for files in os.scandir(root):
-            if str(files.name)[-4:] == '.zip':
-                pass
-            else:
-                liste_episode.append("/home/hadrien/Bureau/sous-titres/" + root.name + '/' + files.name, )
-        analyseFile(liste_episode, serie=serie_id)
-        end = time.time()
-        print('walk ', end - start)
-    conn.close()
 
 
-start = time.time()
-# nltk.download('stopwords')
-walk_sub()
+def walk_sub(directory):
+    """ Parcours du dossier de sous titres retourne un dictionnaire"""
+    seriesPath = dict()
+    for root in os.scandir(directory):
 
-end = time.time()
-print('total ', end - start)
+        listPath = []
+        for racine, dir, files in os.walk(directory + root.name):
+
+            for basename in files:
+                if fnmatch.fnmatch(basename, '*.srt'):
+                    filename = os.path.join(racine, basename)
+                    listPath.append(filename)
+
+            seriesPath[root.name] = listPath
+    return seriesPath
+
+subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
+tot = 0
+totals = time.time()
+for key, value in subs.items():
+    start = time.time()
+    text = read_srt_files(value)
+    end = time.time()
+
+    startbdd = time.time()
+    insertInDatabase(key, text['corpus'], text['lenCorpus'])
+    tot += 1
+    endbdd = time.time()
+    print('INSERT IN MEMORY :{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
+
+fin = time.time()
+print('TOTAL DU TRAITEMENT :', fin - totals)

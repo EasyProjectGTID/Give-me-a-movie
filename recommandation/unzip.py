@@ -27,11 +27,5 @@ def allUnzip():
                 except:
                     pass
 
-for src_dir, dirs, files in os.walk(folder):
-    for dir in dirs:
 
-        for files in os.walk(dir):
-            for file in files[2]:
-                    print(file)
-                    shutil.copy(src_dir+'/'+dir+'/'+file, folder +'/' + dir)
 

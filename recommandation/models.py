@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
-
-
-
 class Series(models.Model):
-    name = models.CharField(max_length=200, unique=True, db_index=True)
+    name = models.CharField(max_length=200, unique=False)
+    corpus_size = models.IntegerField(blank=True, null=True)
+
     def __str__(self):
         return self.name
 
@@ -28,18 +26,18 @@ class Rating(models.Model):
 
 
 class KeyWords(models.Model):
-    key = models.CharField(max_length=200, unique=True, db_index=True)
-    series = models.ManyToManyField(Series, through='Posting', db_index=True)
-
+    key = models.CharField(max_length=200, unique=True)
+    series = models.ManyToManyField(Series, through='Posting')
+    idf = models.DecimalField(max_digits=21, decimal_places=19, null=True)
 
     def __str__(self):
         return str(self.key) + ' : ' + str(self.series.name)
 
 class Posting(models.Model):
     number = models.IntegerField()
-    series = models.ForeignKey(Series, on_delete=models.PROTECT, db_index=True)
-    keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True)
-    tf = models.DecimalField(db_index=True, max_digits=21, decimal_places=19, null=True)
+    series = models.ForeignKey(Series, on_delete=models.PROTECT)
+    keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT)
+    tf = models.DecimalField(max_digits=30, decimal_places=19, null=True)
 
 
     def __str__(self):
