@@ -13,7 +13,7 @@ from nltk.stem.snowball import FrenchStemmer
 from nltk import word_tokenize
 import csv
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
-
+conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 
 def getWords(text):
     return re.findall('\w+', text)
@@ -96,16 +96,16 @@ def stockInMemory(serieName: str, serieID: int, corpus: Counter, lenCorpus: int)
         if dict_keyword.get(word):
             keyID = dict_keyword.get(word)
             postingID += 1
-            dict_posting[postingID] = (value[0], keyID, serieID, value[1])
+            dict_posting[postingID] = (value[0],value[1], keyID, serieID,)
         else:
             keywordID += 1
             postingID += 1
             dict_keyword[word] = keywordID
-            dict_posting[postingID] = (value[0], keywordID, serieID, value[1])
+            dict_posting[postingID] = (value[0],value[1], keywordID, serieID, )
 
 
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
-
+conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 dico = dict()
 start = time.time()
 dict_keyword = OrderedDict()
@@ -146,6 +146,26 @@ with open('keywords.csv', 'w') as csv_file:
     for key, value in dict_keyword.items():
        writer.writerow([value, key])
     csv_file.close()
+
+
+cur = conn.cursor()
+f = open('series.csv')
+cur.copy_from(f, 'recommandation_series', sep=",")
+conn.commit()
+
+
+cur = conn.cursor()
+f = open('keywords.csv')
+cur.copy_from(f, 'recommandation_keywords', sep=",")
+conn.commit()
+
+
+cur = conn.cursor()
+f = open('posting.csv')
+cur.copy_from(f, 'recommandation_posting', sep=",")
+conn.commit()
+conn.close()
+
 fin = time.time()
 print('Longueur de la table posting',len(dict_posting.keys()))
 print('TOTAL DU TRAITEMENT :', fin - totals)

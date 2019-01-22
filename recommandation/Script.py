@@ -49,13 +49,17 @@ def read_srt_files(listSrt):
 
     corpus = Counter(' '.join(filtered_words).split())
     l = lenCorpus(corpus)
+    print(len(corpus))
     corpusWithTf = calculTf(corpus, l)
+    print(len(corpusWithTf))
     return {'corpus':corpusWithTf, 'lenCorpus':l}
 
 def insertInDatabase(serie, corpus, lenCorpus):
 
     cur = conn.cursor()
-    cur.execute("INSERT INTO recommandation_series (name, corpus_size) VALUES ('{0}', '{1}') returning id".format(serie, lenCorpus))
+    cur.execute(
+        "INSERT INTO recommandation_series (name, max_keyword_nb) VALUES ('{0}', '{1}') returning id".format(serie,
+                                                                                                             lenCorpus))
     conn.commit()
     serie_id = cur.fetchone()[0]
 
@@ -64,6 +68,9 @@ def insertInDatabase(serie, corpus, lenCorpus):
             cur.execute(
                 "INSERT INTO recommandation_keywords (key) VALUES ('{}') returning id".format(word))
             key_id = cur.fetchone()[0]
+            cur.execute(
+                "INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
+                    value[0], key_id, serie_id, value[1]))
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -93,7 +100,7 @@ def walk_sub(directory):
             seriesPath[root.name] = listPath
     return seriesPath
 
-subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
+subs = walk_sub('/home/hadrien/Bureau/test/') # Ne pas oublier le slash a la fin
 tot = 0
 totals = time.time()
 for key, value in subs.items():
@@ -105,7 +112,7 @@ for key, value in subs.items():
     insertInDatabase(key, text['corpus'], text['lenCorpus'])
     tot += 1
     endbdd = time.time()
-    print('INSERT IN MEMORY :{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
+    print('INSERT IN BDD:{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
 
 fin = time.time()
 print('TOTAL DU TRAITEMENT :', fin - totals)

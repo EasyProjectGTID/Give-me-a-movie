@@ -49,7 +49,7 @@ cur = conn.cursor()
 
 
 stemmer = FrenchStemmer()
-mots = 'police meutre'
+mots = 'police sexe arme drogue gang'
 liste_mots = mots.split(' ')
 print(liste_mots)
 

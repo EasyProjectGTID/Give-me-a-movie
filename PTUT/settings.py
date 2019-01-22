@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'recommandation.apps.RecommandationConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django123',
         'USER': 'postgres',
-        'PASSWORD': '1777888',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432',
     }

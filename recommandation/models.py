@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 class Series(models.Model):
-    name = models.CharField(max_length=200, unique=False)
-    corpus_size = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=200, unique=True)
+    max_keyword_nb = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -28,7 +28,7 @@ class Rating(models.Model):
 class KeyWords(models.Model):
     key = models.CharField(max_length=200, unique=True)
     series = models.ManyToManyField(Series, through='Posting')
-    idf = models.DecimalField(max_digits=21, decimal_places=19, null=True)
+
 
     def __str__(self):
         return str(self.key) + ' : ' + str(self.series.name)
