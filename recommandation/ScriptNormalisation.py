@@ -11,8 +11,6 @@ import operator
 from collections import Counter
 import time
 from nltk.stem.snowball import FrenchStemmer, EnglishStemmer
-from flashtext.keyword import KeywordProcessor
-from textblob import TextBlob
 from nltk import word_tokenize
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 print(cachedStopWords)
