@@ -33,7 +33,10 @@ def calculTf(corpus, lenCorpus):
     return resultat
 
 def maxNB(corpus):
-    return corpus[max(corpus, key=corpus.get)]
+    try:
+        return corpus[max(corpus, key=corpus.get)]
+    except:
+        return 0
 
 def lenCorpus(corpus) -> int:
     len = 0
@@ -88,9 +91,9 @@ def stockInMemory(serieName: str, serieID: int, corpus: Counter, lenCorpus: int)
     try:
         keywordID = int(sorted(dict_keyword.values())[-1])
         postingID = int(sorted(dict_posting.keys())[-1])
-        print(postingID)
+
     except Exception  as e:
-        print(e)
+
         keywordID = 0
         postingID = 0
     dict_serie[serieID] = serieName
