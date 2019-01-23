@@ -12,6 +12,9 @@ from collections import Counter
 import time
 from nltk.stem.snowball import FrenchStemmer, EnglishStemmer
 from nltk import word_tokenize
+
+from PTUT.settings import DATABASES
+
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 print(cachedStopWords)
 
@@ -182,7 +185,7 @@ def walk_sub(directory):
     return seriesPath
 
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 subs = walk_sub('/home/hadrien/Bureau/test/') # Ne pas oublier le slash a la fin
 
 tot = 0

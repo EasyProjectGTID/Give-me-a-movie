@@ -12,6 +12,9 @@ import time
 from nltk.stem.snowball import FrenchStemmer
 from nltk import word_tokenize
 import csv
+
+from PTUT.settings import DATABASES
+
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 
@@ -105,7 +108,7 @@ def stockInMemory(serieName: str, serieID: int, corpus: Counter, lenCorpus: int)
 
 
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 dico = dict()
 start = time.time()
 dict_keyword = OrderedDict()

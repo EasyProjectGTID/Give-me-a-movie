@@ -4,6 +4,9 @@ import time
 import psycopg2
 from nltk.stem.snowball import FrenchStemmer
 
+from PTUT.settings import DATABASES
+
+
 def calculTf(word, serie_pk):
     tfDict = dict()
     lenght = 0
@@ -44,7 +47,7 @@ def tfIdf(word, liste_series):
 
 
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 cur = conn.cursor()
 
 

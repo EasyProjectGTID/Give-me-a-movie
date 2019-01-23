@@ -9,7 +9,9 @@ from collections import Counter
 import time
 from nltk.stem.snowball import FrenchStemmer
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+from PTUT.settings import DATABASES
+
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 def getWords(text):

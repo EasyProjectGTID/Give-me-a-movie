@@ -1,0 +1,7 @@
+django
+django-extensions
+nltk
+psycopg2-binary
+pandas
+numpy
+pysrt

@@ -2,7 +2,7 @@ import math
 import operator
 import time
 from pprint import pprint
-
+from PTUT.settings import DATABASES
 import psycopg2
 from nltk.stem.snowball import FrenchStemmer
 
@@ -40,7 +40,8 @@ def tfIdf(word, liste_series):
     return res
 
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+print()
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 cur = conn.cursor()
 
 stemmer = FrenchStemmer()
