@@ -9,7 +9,6 @@ class Series(models.Model):
         return self.name
 
 
-
 class Rating(models.Model):
     RATE = (
         ('1', '1',),
