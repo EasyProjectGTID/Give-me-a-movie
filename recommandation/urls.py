@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from recommandation import urls
-from recommandation.views import upload, view_serie
+from recommandation.views import index
 
 urlpatterns = [
-    path('upload/', upload, name='upload'),
-    path('serie/', view_serie, name='serie'),
+    path('', index, name='index'),
+
 
 ]

@@ -96,7 +96,7 @@ def stockInMemory(serieName: str, serieID: int, corpus: Counter, lenCorpus: int)
 
         keywordID = 0
         postingID = 0
-    dict_serie[serieID] = serieName
+    dict_serie[serieID] = (serieName, lenCorpus)
     for word, value in corpus.items():
 
         if dict_keyword.get(word):
@@ -138,7 +138,7 @@ for serieName, value in subs.items():
 with open('series.csv', 'w') as csv_file:
     writer = csv.writer(csv_file)
     for key, value in dict_serie.items():
-       writer.writerow([key, value]) # key = PK, value = serieName
+       writer.writerow([key, value[0], value[1]]) # key = PK, value = serieName
     csv_file.close()
 with open('posting.csv', 'w') as csv_file:
     writer = csv.writer(csv_file)
