@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<ul>
+    {% for serie in toto %}
+    <li>Nom Serie: <a href="{% url 'detailSerie' serie.id %}">{{serie}} </a>Le nombre max d'un mot de cette serie: {{serie.max_keyword_nb}}</li>
+    {% endfor %}}
+</ul>
+
+{% endblock %}
+

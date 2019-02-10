@@ -6,7 +6,12 @@
 </head>
 <body>
 <h1> Nom de la serie : {{ serie }} </h1>
-<p>Clé primaire : {{serie.id}}, nombre de mot pour normalisation {{serie.max_keyword_nb}}</p>
+<p>Clé primaire : {{serie.id}}, Contient {{listeDesMots}} mots</p>
+<ul>
+{% for key, value in serie.infos.items%}
+  <li>{{key}} - {{value}}</li>
+ {% endfor %}
+</ul>
 
 </body>
 </html>

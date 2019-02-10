@@ -2,12 +2,9 @@ import math
 import operator
 import time
 from pprint import pprint
-
 import psycopg2
 from nltk.stem.snowball import FrenchStemmer
-
 from PTUT.settings import DATABASES
-
 
 def calculTf(word, serie_pk):
     cur.execute(
@@ -16,22 +13,18 @@ def calculTf(word, serie_pk):
     tf = cur.fetchall()
     return float(tf[0][0])
 
-
 def lenCollection():
     cur.execute(
         "SELECT count(*) FROM recommandation_series as s")
     lenCollection = cur.fetchall()
     return lenCollection[0][0]
 
-
 def idf(word):
     cur.execute(
         "SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(
             word))
     documentWithTermCount = cur.fetchall()
-
     return float(math.log2(lenCollection() / documentWithTermCount[0][0]))
-
 
 def tfIdf(word, liste_series):
     res = dict()
@@ -43,7 +36,6 @@ def tfIdf(word, liste_series):
 
         res[serie_name[0][0]] = float(tf * idf_du_mot)
     return res
-
 
 conn = psycopg2.connect(
     "dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'],

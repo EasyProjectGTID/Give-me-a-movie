@@ -9,16 +9,12 @@ from collections import Counter
 from nltk import cluster
 
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
-
-
 def cosine_distance(seriename, u, v):
     """
     Returns the cosine of the angle between vectors v and u. This is equal to
     u.v / |u||v|.
     """
-
     return (seriename,numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))))
-
 
 def buildVector(seriename, serie1, serie2):
 
@@ -29,7 +25,6 @@ def buildVector(seriename, serie1, serie2):
     counter2_c = Counter()
 
     for k in counter1:
-
         counter1_c[k[0]] = k[1]
     for k in counter2:
         counter2_c[k[0]] = k[1]
@@ -43,7 +38,7 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='scrubs'")
+    "select s.id from recommandation_series s where s.name='house'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

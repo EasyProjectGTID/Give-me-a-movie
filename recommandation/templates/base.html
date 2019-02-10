@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'js/slick/slick.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'js/slick/slick-theme.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
+    <script type="text/javascript" src="{% static 'js/slick/slick.min.js' %}"></script>
+
+    <title>Give Me a Movie !</title>
+</head>
+<body>
+
+{% block navBar %}
+{% include 'navBar.html' %}
+{% endblock %}
+
+{%block content%}
+
+{%endblock%}
+
+
+
+</body>
+</html>

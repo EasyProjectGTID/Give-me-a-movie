@@ -1,12 +1,21 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 
 class Series(models.Model):
     name = models.CharField(max_length=200, unique=True)
     max_keyword_nb = models.IntegerField(blank=True, null=True)
+    real_name = models.CharField(max_length=100, blank=True, null=True)
+    infos = JSONField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        if self.real_name:
+            return self.real_name
+        else:
+            return self.name
+
+    class Meta:
+        verbose_name_plural = "Series"
 
 
 class Rating(models.Model):
@@ -30,7 +39,7 @@ class KeyWords(models.Model):
 
 
     def __str__(self):
-        return str(self.key) + ' : ' + str(self.series.name)
+        return str(self.key)
 
 class Posting(models.Model):
     number = models.IntegerField()
@@ -38,6 +47,3 @@ class Posting(models.Model):
     keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True)
     tf = models.DecimalField(max_digits=30, decimal_places=19, null=True)
 
-
-    def __str__(self):
-        return str(self.keywords.key) + ' : ' + str(self.number) + ' : ' + self.series
