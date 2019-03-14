@@ -7,3 +7,7 @@ numpy
 pysrt
 django-debug-toolbar
 requests
+django-cors-headers
+redis
+django-redis-cache
+django-redis

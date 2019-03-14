@@ -51,29 +51,30 @@ conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(
 cur = conn.cursor()
 
 
-def search(keywords):
+stemmer = FrenchStemmer()
+mots = 'police sexe arme drogue gang'
+liste_mots = mots.split(' ')
+print(liste_mots)
 
-    stemmer = FrenchStemmer()
+start = time.time()
+dict_res = dict()
+for mot in liste_mots:
+    mot = stemmer.stem(mot)
+    print(mot)
+    cur.execute(
+        "SELECT s.id FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE  p.series_id=s.id AND p.keywords_id=k.id AND k.key = '{}'".format(mot))
+    liste_series = cur.fetchall()
 
-    liste_mots = keywords.split(' ')
-    start = time.time()
-    dict_res = dict()
-    for mot in liste_mots:
-        mot = stemmer.stem(mot)
+    res_tampon = tfIdf(mot, liste_series)
+    for key, value in res_tampon.items():
+        if dict_res.get(key):
+            dict_res[key] = dict_res[key] + value
+        else:
+            dict_res[key] = value
 
-        cur.execute(
-            "SELECT s.id FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE  p.series_id=s.id AND p.keywords_id=k.id AND k.key = '{}'".format(mot))
-        liste_series = cur.fetchall()
-
-        res_tampon = tfIdf(mot, liste_series)
-        for key, value in res_tampon.items():
-            if dict_res.get(key):
-                dict_res[key] = dict_res[key] + value
-            else:
-                dict_res[key] = value
-
-
-    return sorted(dict_res.items(), key=operator.itemgetter(1), reverse=True)
+print(sorted(dict_res.items(), key=operator.itemgetter(1)))
+end = time.time()
+print('total Temps:',end - start)
 
 
 

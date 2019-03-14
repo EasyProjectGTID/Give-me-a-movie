@@ -30,6 +30,7 @@ def buildVector(seriename, serie1, serie2):
         counter2_c[k[0]] = k[1]
 
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
+    longueur = len(all_items)
     vector1 = [counter1_c[k] for k in all_items]
     vector2 = [counter2_c[k] for k in all_items]
 
@@ -38,7 +39,7 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='house'")
+    "select s.id from recommandation_series s where s.name='fridaynightlights'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

@@ -1,3 +1,3 @@
-from .index import *
+from .views import *
 from .login import *
-from .series import *
+from .register import *

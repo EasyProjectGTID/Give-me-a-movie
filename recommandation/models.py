@@ -20,13 +20,10 @@ class Series(models.Model):
 
 class Rating(models.Model):
     RATE = (
-        ('1', '1',),
-        ('2', '2',),
-        ('3', '3',),
-        ('4', '4',),
-        ('5', '5',),
+        ('1', 'J\'aime'),
+        ('0', 'Je n\'aime pas'),
+
     )
-    comment = models.TextField(blank=True, null=True)
     rating = models.CharField(max_length=1, choices=RATE)
     serie = models.ForeignKey(Series, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)

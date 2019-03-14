@@ -7,7 +7,10 @@ def getInfos(modeladmin, request, queryset):
         URL = 'http://www.omdbapi.com/?apikey=' + API_KEY + '&'
 
         r = requests.get(URL + 't=' + serie.real_name)
+
         serie.infos = r.json()
+        serie.save()
+        print(serie.real_name, r.json())
 
 
 getInfos.short_description = "Télécharger les informations complémentaires pour les series selectionnées"
