@@ -23,7 +23,7 @@ SECRET_KEY = 'r0b*v=m9smuwl$ib&jwym1ata+)q#^poufbo+o5ff^gz0e3nj-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = '127.0.0.1'
 
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recommandation.apps.RecommandationConfig',
     'django_extensions',
-    'debug_toolbar',
+
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
 
 ]
 
@@ -130,4 +132,19 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'recommandation/static/'),
 )
 
-API_KEY = '46dbca1e01ea8f33e3137a9ebc12d685'
+API_KEY = '2d1a44c0'
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/2',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+if DEBUG is True:
+    INSTALLED_APPS.append('debug_toolbar',)
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware',)
