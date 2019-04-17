@@ -61,7 +61,7 @@ def recentItems(request):
         except:
             pass
     resultat_json = []
-    for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True)[0:4]:
+    for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True)[0:6]:
         resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos})
 
     return JsonResponse(resultat_json, safe=False)
