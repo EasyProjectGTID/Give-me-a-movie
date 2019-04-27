@@ -108,15 +108,18 @@ subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a
 tot = 0
 totals = time.time()
 for key, value in subs.items():
-    start = time.time()
-    text = read_srt_files(value)
-    end = time.time()
-
-    startbdd = time.time()
-    insertInDatabase(key, text['corpus'], text['lenCorpus'])
-    tot += 1
-    endbdd = time.time()
-    print('INSERT IN BDD:{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
+    if key =='bones':
+        print(key)
+        print(value)
+    # start = time.time()
+    # text = read_srt_files(value)
+    # end = time.time()
+    #
+    # startbdd = time.time()
+    # insertInDatabase(key, text['corpus'], text['lenCorpus'])
+    # tot += 1
+    # endbdd = time.time()
+    # print('INSERT IN BDD:{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
 
 fin = time.time()
 print('TOTAL DU TRAITEMENT :', fin - totals)

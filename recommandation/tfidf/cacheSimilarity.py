@@ -64,8 +64,8 @@ def construct(serie_pk):
         resultat.append(cosine_distance(serie_id, v1, v2))
 
     resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
-    print(resultat_trier[0:3])
-    r.set(serie_pk, pickle.dumps(resultat_trier[0:3]))
+    print(resultat_trier)
+    r.set(serie_pk, pickle.dumps(resultat_trier))
 
 
 

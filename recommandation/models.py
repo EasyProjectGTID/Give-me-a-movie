@@ -17,6 +17,8 @@ class Series(models.Model):
     class Meta:
         verbose_name_plural = "Series"
 
+    
+
 
 class Rating(models.Model):
     RATE = (

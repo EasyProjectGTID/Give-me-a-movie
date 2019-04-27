@@ -37,5 +37,8 @@ class vote(APIView):
     def post(self, *args, **kwargs):
         print(self.request.user)
         serie = Series.objects.get(pk=self.request.data['args'])
-        Rating.objects.create(rating=self.request.data['choice'], serie=serie, user=self.request.user)
+        try:
+            Rating.objects.create(rating=self.request.data['choice'], serie=serie, user=self.request.user)
+        except:
+            pass
         return HttpResponse('ok')

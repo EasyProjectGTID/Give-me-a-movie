@@ -92,28 +92,6 @@ def calculTf(corpus, maxi):
 def maxNB(corpus):
     return corpus[max(corpus, key=corpus.get)]
 
-# def read_srt_files(listSrt):
-#     stemmer = FrenchStemmer()
-#     list = []
-#
-#     for episode in listSrt:
-#         subs = pysrt.open(episode, encoding='iso-8859-1')
-#
-#         for ligne in range(len(subs)):
-#             for mot in getWords(subs[ligne].text):
-#                 if len(mot) > 2:
-#                     list.append(mot.lower())
-#
-#
-#     filtered_words = []
-#     for word in list:
-#         if word not in cachedStopWords:
-#             filtered_words.append(stemmer.stem(word))
-#
-#     corpus = Counter(' '.join(filtered_words).split())
-#     maxi = maxNB(corpus)
-#     corpusWithTf = calculTf(corpus, maxi)
-#     return {'corpus':corpusWithTf, 'lenCorpus':maxi}
 
 def read_srt_files(listSrt):
     corpus = collections.Counter()
@@ -131,8 +109,7 @@ def read_srt_files(listSrt):
         tokens = nltk.word_tokenize(subs.text)
 
         words = [stemmer.stem(w.lower()) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
-
-
+        #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
 
         corpus.update(words)
 

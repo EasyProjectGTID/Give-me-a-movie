@@ -2,10 +2,11 @@ from django.urls import path
 from recommandation.views import index, user_login, logout_user
 from recommandation.views import register
 
-from recommandation.views.views import rechercheView, similarItemsView, lastRecentView, MyRecommandation
+from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
 from recommandation.views.adminViews import admin, allSerieView
 from recommandation.views.monCompteViews import Profile
 from recommandation.views.voteViews import vote
+from recommandation.views.recommandViews import recommandTemplate
 
 urlpatterns = [
     path('', index, name='index'),
@@ -16,7 +17,7 @@ urlpatterns = [
     path('recent_items', lastRecentView.as_view(), name='recent_items'),
     path('similar', similarItemsView.as_view(), name='similarItems'),
     path('vote', vote.as_view(), name='vote'),
-    path('my-recommandation', MyRecommandation.as_view(), name='MyRecommandation'),
+    path('recommand', recommandTemplate, name='recommand'),
 
     #Gestion du login
     path('login', user_login, name='login'),

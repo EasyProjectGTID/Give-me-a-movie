@@ -4,7 +4,7 @@ import pickle
 import time
 from _operator import itemgetter
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
@@ -40,13 +40,7 @@ class rechercheView(APIView):
            """
         keywords = self.request.query_params.get('keywords')
         resultat_json = []
-        if self.request.user is False:
-            res = search(keywords)
-            for serie in res[0:4]:
-                serie = Series.objects.get(name=serie[0])
-                resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
-            return HttpResponse(json.dumps(resultat_json))
-        else:
+        if self.request.user.is_authenticated:
             res = search(keywords)
             for serie in res[0:4]:
                 serie = Series.objects.get(name=serie[0])
@@ -56,8 +50,17 @@ class rechercheView(APIView):
                 else:
                     afficheVote = True
 
-                resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
+                resultat_json.append(
+                    {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
             return HttpResponse(json.dumps(resultat_json))
+
+        else:
+            res = search(keywords)
+            for serie in res[0:4]:
+                serie = Series.objects.get(name=serie[0])
+                resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
+            return HttpResponse(json.dumps(resultat_json))
+
 
 
 
@@ -67,20 +70,14 @@ class similarItemsView(APIView):
     # authentication_classes = (TokenAuthentication, SessionAuthentication,)
 
     def get(self, *args, **kwargs):
-        if self.request.user is False:
-            id = self.request.query_params.get('id')
-            resultat = pickle.loads(r.get(id))
-            resultat_json = []
-            for pk in resultat:
-                serie = Series.objects.get(id=pk[0])
-                resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
-            return HttpResponse(json.dumps(resultat_json))
-        else:
+        if self.request.user.is_authenticated:
             id = self.request.query_params.get('id')
             user = self.request.user
             resultat = pickle.loads(r.get(id))
+
             resultat_json = []
-            for pk in resultat:
+            print(resultat)
+            for pk in resultat[0:3]:
 
                 serie = Series.objects.get(id=pk[0])
 
@@ -94,26 +91,26 @@ class similarItemsView(APIView):
                     {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
             return HttpResponse(json.dumps(resultat_json))
 
+        else:
+            id = self.request.query_params.get('id')
+            resultat = pickle.loads(r.get(id))
+            resultat_json = []
+            for pk in resultat[0:3]:
+                serie = Series.objects.get(id=pk[0])
+                resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
+            return HttpResponse(json.dumps(resultat_json))
+
+
 
 class lastRecentView(APIView):
     # permission_classes = (permissions.IsAuthenticated)
-    # authentication_classes = (TokenAuthentication, SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, *args, **kwargs):
-        if self.request.user is False:
-            series = Series.objects.all()
-            serieToOrder = dict()
-            for serie in series:
-                try:
-                    serieToOrder[serie] = datetime.datetime.strptime(serie.infos.get('Released', None), "%d %b %Y")
-                except:
-                    pass
-            resultat_json = []
-            for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True)[0:6]:
-                resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos})
-            return HttpResponse(json.dumps(resultat_json))
-        else:
 
+        if self.request.user.is_authenticated:
+            print('je passe ici')
+            print(self.request.user)
             series = Series.objects.all()
             serieToOrder = dict()
             for serie in series:
@@ -122,36 +119,53 @@ class lastRecentView(APIView):
                 except:
                     pass
             resultat_json = []
-            for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True)[0:6]:
-                print(self.request.user)
+            for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True):
+
                 rating = Rating.objects.filter(user=self.request.user, serie=serie[0]).exists()
                 if rating:
                     afficheVote = False
                 else:
                     afficheVote = True
-                resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos, 'afficheVote': afficheVote})
-        return HttpResponse(json.dumps(resultat_json))
-
-
-
-class MyRecommandation(APIView):
-    authentication_classes = (TokenAuthentication, SessionAuthentication,)
-    def get(self, *args, **kwargs):
-            print(self.request.user)
-            resultat_json = []
-            ratings = Rating.objects.filter(user=self.request.user, rating='1')
-            for rating in ratings:
-                resultat = pickle.loads(r.get(rating.serie.pk))
-                for pk in resultat:
-
-                    serie = Series.objects.get(id=pk[0])
-
-                    rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
-                    if rating:
-                        afficheVote = False
-                    else:
-                        afficheVote = True
-
-                    resultat_json.append(
-                        {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
+                resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos,
+                                      'afficheVote': afficheVote})
             return HttpResponse(json.dumps(resultat_json))
+        else:
+            print('je suis anonyme')
+            print(self.request.user)
+            series = Series.objects.all()
+            serieToOrder = dict()
+            for serie in series:
+                try:
+                    serieToOrder[serie] = datetime.datetime.strptime(serie.infos.get('Released', None), "%d %b %Y")
+                except:
+                    pass
+            resultat_json = []
+            for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True):
+                resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos,'afficheVote': True })
+            return HttpResponse(json.dumps(resultat_json))
+
+
+
+
+
+# class MyRecommandation(APIView):
+#     authentication_classes = (TokenAuthentication, SessionAuthentication,)
+#     def get(self, *args, **kwargs):
+#             print(self.request.user)
+#             resultat_json = []
+#             ratings = Rating.objects.filter(user=self.request.user, rating='1')
+#             for rating in ratings:
+#                 resultat = pickle.loads(r.get(rating.serie.pk))
+#                 for pk in resultat:
+#
+#                     serie = Series.objects.get(id=pk[0])
+#
+#                     rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
+#                     if rating:
+#                         afficheVote = False
+#                     else:
+#                         afficheVote = True
+#
+#                     resultat_json.append(
+#                         {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
+#             return HttpResponse(json.dumps(resultat_json))
