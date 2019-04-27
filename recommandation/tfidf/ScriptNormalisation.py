@@ -137,7 +137,7 @@ def read_srt_files(listSrt):
         corpus.update(words)
 
     maxi = maxNB(corpus)
-    print(len(corpus))
+
     corpusWithTf = calculTf(corpus, maxi)
     return {'corpus':corpusWithTf, 'lenCorpus':maxi}
 
@@ -186,7 +186,7 @@ def walk_sub(directory):
 
 
 conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
-subs = walk_sub('/home/hadrien/Bureau/test/') # Ne pas oublier le slash a la fin
+subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
 
 tot = 0
 totals = time.time()

@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from recommandation.forms.LoginForm import ConnexionForm
-
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.decorators import login_required
 
 
@@ -14,6 +14,10 @@ def user_login(request):
             password = form.cleaned_data["password"]
             user = authenticate(username=username, password=password)
             if user:
+                token, created = Token.objects.get_or_create(user=user)
+                # Crée le token pour les apps react et l'insert en session
+                request.session['token'] = str(token)
+
                 login(request, user)
                 return redirect('/')
             else:
@@ -28,8 +32,8 @@ def user_login(request):
 
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login')
 def logout_user(request):
     logout(request)
 
-    return HttpResponseRedirect('login/')
+    return HttpResponseRedirect('login')

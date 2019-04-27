@@ -28,6 +28,8 @@ class Rating(models.Model):
     serie = models.ForeignKey(Series, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
 
+    class Meta:
+        unique_together = (("rating", "serie", "user"),)
 
 
 class KeyWords(models.Model):

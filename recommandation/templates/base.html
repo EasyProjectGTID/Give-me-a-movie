@@ -8,7 +8,8 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
-    <script type="text/javascript" src="{% static 'js/slick/slick.min.js' %}"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <title>Give Me a Movie !</title>
 </head>
@@ -20,8 +21,13 @@
 
 {%block content%}
 <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-<script type="text/javascript" src="{% static 'main.d6a54f9a.js' %}"></script>
+  
+    <div id="root" style="margin-top: 1%"
+     data-django='{"name":"{{ user }}", "token": "{{ token }}"}'></div>
+
+<script type="text/javascript" src="{% static 'main.js' %}"></script>
+
+
 
 {%endblock%}
 

@@ -8,12 +8,14 @@ import operator
 from collections import Counter
 import time
 from nltk.stem.snowball import FrenchStemmer
-
+import nltk
 from PTUT.settings import DATABASES
 
 conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
 
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
+
+
 def getWords(text):
     return re.findall('\w+', text)
 
@@ -102,7 +104,7 @@ def walk_sub(directory):
             seriesPath[root.name] = listPath
     return seriesPath
 
-subs = walk_sub('/home/hadrien/Bureau/test/') # Ne pas oublier le slash a la fin
+subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
 tot = 0
 totals = time.time()
 for key, value in subs.items():

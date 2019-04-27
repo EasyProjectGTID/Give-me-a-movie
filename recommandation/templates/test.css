@@ -1,0 +1,33 @@
+.vote {
+  position: absolute;
+  display: none;
+  transition: all 0.75s ease;
+}
+.test {
+  background-color:rgb(201, 201, 201);
+  opacity: 0.95;
+  height: 76px;
+  z-index: 2;
+  font-size: 16px;
+  padding-top: 25px;
+}
+
+.downvote {
+  background-color: rgb(250, 0, 0);
+  opacity: 0.95;
+  height: 76px;
+  z-index: 2;
+  font-size: 16px;
+  padding-top: 25px;
+}
+.upvote {
+  background-color: rgb(0, 119, 16);
+  opacity: 0.95;
+  height: 76px;
+  z-index: 2;
+  font-size: 16px;
+  padding-top: 25px;
+}
+.cardCustom__link:hover .vote {
+  display: block;
+}

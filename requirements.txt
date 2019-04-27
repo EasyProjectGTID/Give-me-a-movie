@@ -11,3 +11,4 @@ django-cors-headers
 redis
 django-redis-cache
 django-redis
+djangorestframework

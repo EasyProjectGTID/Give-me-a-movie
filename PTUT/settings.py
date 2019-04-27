@@ -38,8 +38,32 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recommandation.apps.RecommandationConfig',
     'django_extensions',
+    'rest_framework',
+    'rest_framework.authtoken',
 
 ]
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'access-control-allow-origin',
+    'access-control-allow-methods',
+)
+
 
 MIDDLEWARE = [
 
@@ -52,7 +76,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
-
 
 ]
 
@@ -134,7 +157,6 @@ STATICFILES_DIRS = (
 
 API_KEY = '2d1a44c0'
 
-
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -146,5 +168,5 @@ CACHES = {
 }
 
 if DEBUG is True:
-    INSTALLED_APPS.append('debug_toolbar',)
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    INSTALLED_APPS.append('debug_toolbar', )
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware', )

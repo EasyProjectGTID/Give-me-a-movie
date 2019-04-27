@@ -7,7 +7,7 @@ from .models import Series, KeyWords, Posting, Rating
 
 @admin.register(Series)
 class Seriesdmin(admin.ModelAdmin):
-    list_display = ('name', 'real_name')
+    list_display = ('name', 'real_name', 'infos')
     actions = [getInfos]
 
     class Meta:
