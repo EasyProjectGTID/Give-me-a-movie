@@ -1,11 +1,8 @@
-import datetime
+
 import json
-import pickle
-import time
-from _operator import itemgetter
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
@@ -23,6 +20,31 @@ r = redis.Redis(host='localhost', port=6379, db=2)
 
 @login_required()
 def recommandTemplate(request):
-        user = User.objects.get(pk=request.user.pk)
-        token, created = Token.objects.get_or_create(user=user)
-        return render(request, 'base.html', {'user': user, 'token': token})
+	user = User.objects.get(pk=request.user.pk)
+	token, created = Token.objects.get_or_create(user=user)
+	return render(request, 'recommand.html', {'user': user, 'token': token})
+
+
+class recommandView(APIView):
+
+
+	# permission_classes = (permissions.IsAuthenticated)
+	# authentication_classes = (TokenAuthentication, SessionAuthentication,)
+
+	def get(self, *args, **kwargs):
+		"""
+		   :param request:
+		   :return: utiliser pour la recherche
+		"""
+
+		series = Series.objects.all()
+		resultat_json = []
+		for serie in series:
+			resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
+		return HttpResponse(json.dumps(resultat_json))
+
+	def post(self, *args, **kwargs):
+		pass
+
+
+

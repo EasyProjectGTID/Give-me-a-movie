@@ -32,11 +32,14 @@ class Rating(models.Model):
 
     class Meta:
         unique_together = (("rating", "serie", "user"),)
+    def __str__(self):
+        return self.user.username + ' a voté ' + self.get_rating_display() + ' ' +  self.serie.__str__()
 
 
 class KeyWords(models.Model):
     key = models.CharField(max_length=200, unique=True, db_index=True)
     series = models.ManyToManyField(Series, through='Posting')
+    idf = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.key)
@@ -45,5 +48,5 @@ class Posting(models.Model):
     number = models.IntegerField()
     series = models.ForeignKey(Series, on_delete=models.PROTECT)
     keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True)
-    tf = models.DecimalField(max_digits=30, decimal_places=19, null=True)
+    tf = models.FloatField(null=True)
 

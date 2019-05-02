@@ -1,17 +1,15 @@
 import collections
 import fnmatch
+import operator
 import os
-
 import nltk
 import psycopg2
 import pysrt
 import re
 from nltk.corpus import stopwords
-import operator
-from collections import Counter
 import time
+from nltk.stem import PorterStemmer
 from nltk.stem.snowball import FrenchStemmer, EnglishStemmer
-from nltk import word_tokenize
 
 from PTUT.settings import DATABASES
 
@@ -22,10 +20,8 @@ def _calculate_languages_ratios(text):
     """
     Calculate probability of given text to be written in several languages and
     return a dictionary that looks like {'french': 2, 'spanish': 4, 'english': 0}
-
     @param text: Text whose language want to be detected
     @type text: str
-
     @return: Dictionary with languages and unique stopwords seen in analyzed text
     @rtype: dict
     """
@@ -34,7 +30,6 @@ def _calculate_languages_ratios(text):
 
     '''
     nltk.wordpunct_tokenize() splits all punctuations into separate tokens
-
     >>> wordpunct_tokenize("That's thirty minutes away. I'll be there in ten.")
     ['That', "'", 's', 'thirty', 'minutes', 'away', '.', 'I', "'", 'll', 'be', 'there', 'in', 'ten', '.']
     '''
@@ -58,13 +53,10 @@ def detect_language(text):
     """
     Calculate probability of given text to be written in several languages and
     return the highest scored.
-
     It uses a stopwords based approach, counting how many unique stopwords
     are seen in analyzed text.
-
     @param text: Text whose language want to be detected
     @type text: str
-
     @return: Most scored language guessed
     @rtype: str
     """
@@ -85,12 +77,14 @@ def getKey(item):
 def calculTf(corpus, maxi):
     resultat = dict()
     for word, number in corpus.items():
-        resultat[word] = (number, number / maxi)
-
+        resultat[word] = (number, round(number / maxi, 3))
+    print(sorted(resultat.items(), key=operator.itemgetter(1), reverse=True))
     return resultat
 
 def maxNB(corpus):
     return corpus[max(corpus, key=corpus.get)]
+
+
 
 
 def read_srt_files(listSrt):
@@ -98,24 +92,31 @@ def read_srt_files(listSrt):
 
 
     for episode in listSrt:
+        #print(episode)
 
         subs = pysrt.open(episode, encoding='iso-8859-1')
-        language = detect_language(subs.text[0:1000])
-        if language == 'french':
-            stemmer = FrenchStemmer()
-        elif language == 'english':
-            stemmer = EnglishStemmer()
+        # language = detect_language(subs.text[0:1000])
+        # if language == 'french':
+        #     stemmer = FrenchStemmer()
+        # elif language == 'english':
+        #     stemmer = EnglishStemmer()
+        # else:
+        stemmer = PorterStemmer()
 
         tokens = nltk.word_tokenize(subs.text)
 
         words = [stemmer.stem(w.lower()) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
-        #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
+
+        #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
 
         corpus.update(words)
 
+
     maxi = maxNB(corpus)
+    print('maxi', maxi)
 
     corpusWithTf = calculTf(corpus, maxi)
+
     return {'corpus':corpusWithTf, 'lenCorpus':maxi}
 
 def insertInDatabase(serieName, corpus, lenCorpus):
@@ -131,13 +132,6 @@ def insertInDatabase(serieName, corpus, lenCorpus):
             "INSERT INTO recommandation_keywords (key) VALUES ('{0}') ON CONFLICT (key) DO UPDATE set key='{0}' returning id".format(word))
 
         key_id = cur.fetchone()[0]
-
-
-        # except Exception as e:
-        #     print(e)
-        #     # conn.rollback()
-        #     # cur.execute("SELECT k.id from recommandation_keywords as k where k.key='{}'".format(word))
-        #     # key_id = cur.fetchone()[0]
 
         cur.execute(
             "INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
@@ -168,11 +162,15 @@ subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a
 tot = 0
 totals = time.time()
 for key, value in subs.items():
+
+
+
     start = time.time()
     text = read_srt_files(value)
     end = time.time()
 
     startbdd = time.time()
+
     insertInDatabase(key, text['corpus'], text['lenCorpus'])
     tot += 1
     endbdd = time.time()
@@ -180,3 +178,4 @@ for key, value in subs.items():
 
 fin = time.time()
 print('TOTAL DU TRAITEMENT :', fin - totals)
+

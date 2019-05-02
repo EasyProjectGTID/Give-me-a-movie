@@ -17,18 +17,14 @@ def calculTf(word, serie_pk):
     tf = cur.fetchall()
     return float(tf[0][0])
 
-def lenCollection():
-    cur.execute(
-        "SELECT count(*) FROM recommandation_series as s")
-    lenCollection = cur.fetchall()
-    return lenCollection[0][0]
+
 
 def idf(word):
     cur.execute(
-        "SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(word))
-    documentWithTermCount = cur.fetchall()
-
-    return float(math.log2(lenCollection() / documentWithTermCount[0][0]))
+        "SELECT idf FROM recommandation_keywords as k WHERE k.key = '{}'".format(word))
+    resultat = cur.fetchall()
+    print(resultat)
+    return resultat
 
 def tfIdf(word, liste_series):
     res = dict()
@@ -40,7 +36,7 @@ def tfIdf(word, liste_series):
         serie_name = cur.fetchall()
 
 
-        res[serie_name[0][0]] = round(100 * float(tf * idf_du_mot),2)
+        res[serie_name[0][0]] = float(tf * idf_du_mot)
     return res
 
 
@@ -55,7 +51,7 @@ def search(keywords):
     start = time.time()
     dict_res = dict()
     for mot in liste_mots:
-        #mot = stemmer.stem(mot)
+        mot = stemmer.stem(mot)
         print(mot)
 
         cur.execute(
@@ -67,7 +63,7 @@ def search(keywords):
                 if dict_res.get(key):
                     dict_res[key] = dict_res[key] + value
                 else:
-                    dict_res[key] = value
+                    dict_res[key] = value * 100
         except:
             pass
     return sorted(dict_res.items(), key=operator.itemgetter(1), reverse=True)
@@ -75,4 +71,5 @@ def search(keywords):
 
 
 
-print(search('surviv'))
+#print(search('plane crash island'))
+print(idf('surviv'))

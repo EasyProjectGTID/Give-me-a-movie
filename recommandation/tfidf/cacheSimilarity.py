@@ -27,44 +27,43 @@ def buildVector(seriename, serie1, serie2):
     counter2_c = Counter()
 
     for k in counter1:
+        #print(k)
         counter1_c[k[0]] = k[1]
     for k in counter2:
         counter2_c[k[0]] = k[1]
 
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
-    vector1 = [counter1_c[k] for k in all_items]
-    vector2 = [counter2_c[k] for k in all_items]
+    vector1 = [float(counter1_c[k]) for k in all_items]
+    vector2 = [float(counter2_c[k]) for k in all_items]
 
     return seriename, vector1, vector2
 def construct(serie_pk):
-    cur = conn.cursor()
-
 
     cur.execute(
-        "select k.key, p.number from recommandation_keywords k, recommandation_posting p, recommandation_series s where k.id = p.keywords_id AND s.id = p.series_id AND s.id='{}'".format(
-            serie_pk))
+        "select s.id from recommandation_series s where s.id='{}'".format(serie_pk))
+    serie_id = cur.fetchall()[0][0]
+
+    cur.execute(
+        "select * from mv_{}".format(serie_id))
     serie_comparer = cur.fetchall()
 
-    cur.execute(
-        "select s.id from recommandation_series s where s.id <> '{}'".format(serie_pk))
+    cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
     others = cur.fetchall()
     resultat = []
     start = time.time()
     for other in others:
-        cur.execute(
-            "select s.id from recommandation_series s where s.id='{}'".format(other[0]))
-        serie_id = cur.fetchall()[0][0]
+        cur.execute("select s.name from recommandation_series s where s.id='{}'".format(other[0]))
+        seriename = cur.fetchall()[0][0]
 
-        cur.execute(
-            "select k.key, p.number from recommandation_keywords k, recommandation_posting p, recommandation_series s where k.id = p.keywords_id AND s.id = p.series_id AND s.id='{}'".format(
-                other[0]))
+        cur.execute("select * from mv_{}".format(other[0]))
+        other_words = cur.fetchall()
 
-        serie_id, v1, v2 = buildVector(serie_id, serie_comparer, cur.fetchall())
+        seriename, v1, v2 = buildVector(seriename, serie_comparer, other_words)
 
-        resultat.append(cosine_distance(serie_id, v1, v2))
+        resultat.append(cosine_distance(seriename, v1, v2))
 
     resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
-    print(resultat_trier)
+    #print(resultat_trier)
     r.set(serie_pk, pickle.dumps(resultat_trier))
 
 

@@ -6,7 +6,7 @@ extension = ".zip"
 
 def allUnzip():
     for path, dir_list, file_list in os.walk(folder):
-        print(file_list)
+        print(path, file_list)
         for file_name in file_list:
 
             if file_name.endswith(".zip"):
@@ -24,8 +24,8 @@ def allUnzip():
                     zip_obj = zipfile.ZipFile(abs_file_path, 'r')
                     zip_obj.extractall(output_path)
                     zip_obj.close()
-                except:
-                    pass
+                except Exception as e :
+                    print(e)
 
 
-
+allUnzip()

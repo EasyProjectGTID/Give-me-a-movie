@@ -79,7 +79,7 @@ class similarItemsView(APIView):
             print(resultat)
             for pk in resultat[0:3]:
 
-                serie = Series.objects.get(id=pk[0])
+                serie = Series.objects.get(name=pk[0])
 
                 rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
                 if rating:
@@ -96,7 +96,7 @@ class similarItemsView(APIView):
             resultat = pickle.loads(r.get(id))
             resultat_json = []
             for pk in resultat[0:3]:
-                serie = Series.objects.get(id=pk[0])
+                serie = Series.objects.get(name=pk[0])
                 resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
             return HttpResponse(json.dumps(resultat_json))
 
@@ -109,8 +109,6 @@ class lastRecentView(APIView):
     def get(self, *args, **kwargs):
 
         if self.request.user.is_authenticated:
-            print('je passe ici')
-            print(self.request.user)
             series = Series.objects.all()
             serieToOrder = dict()
             for serie in series:
@@ -130,8 +128,7 @@ class lastRecentView(APIView):
                                       'afficheVote': afficheVote})
             return HttpResponse(json.dumps(resultat_json))
         else:
-            print('je suis anonyme')
-            print(self.request.user)
+
             series = Series.objects.all()
             serieToOrder = dict()
             for serie in series:

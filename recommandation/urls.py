@@ -6,7 +6,7 @@ from recommandation.views.views import rechercheView, similarItemsView, lastRece
 from recommandation.views.adminViews import admin, allSerieView
 from recommandation.views.monCompteViews import Profile
 from recommandation.views.voteViews import vote
-from recommandation.views.recommandViews import recommandTemplate
+from recommandation.views.recommandViews import recommandTemplate, recommandView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('similar', similarItemsView.as_view(), name='similarItems'),
     path('vote', vote.as_view(), name='vote'),
     path('recommand', recommandTemplate, name='recommand'),
+    path('recommand-api', recommandView.as_view(), name='recommand-api'),
 
     #Gestion du login
     path('login', user_login, name='login'),

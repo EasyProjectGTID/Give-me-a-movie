@@ -11,12 +11,12 @@ serie['24'] = '24'
 serie['trucalling'] = 'Tru Calling'
 serie['eureka'] = 'Eureka'
 serie['onetreehill'] = 'one tree hill'
-serie['womensmurderclub'] = """womens murder club"""
+serie['womensmurderclub'] = "womens murder club"
 serie['eleventhhour'] = 'eleventh hour'
 serie['friends'] = 'Friends'
 serie['desperatehousewives'] = 'Desperate Housewives'
 serie['knightrider'] = 'Knight Rider'
-serie['greysanatomy'] = """Greys Anatomy"""
+serie['greysanatomy'] = "Greys Anatomy"
 serie['community'] = 'Community'
 serie['jake'] = 'Jake'
 serie['jericho'] = 'Jericho'
@@ -38,7 +38,7 @@ serie['burnnotice'] = 'Burn Notice'
 serie['dexter'] = 'Dexter'
 serie['spaced'] = 'Spaced'
 serie['futurama'] = 'Futurama'
-serie['theoc'] = 'The O.C'
+serie['theoc'] = 'The OC'
 serie['caprica'] = 'Caprica'
 serie['entourage'] = 'Entourage'
 serie['breakingbad'] = 'Breaking Bad'
@@ -134,6 +134,7 @@ serie['raines'] = 'Raines'
 serie['merlin'] = 'Merlin'
 serie['fridaynightlights'] = 'Friday Night Lights'
 serie['thetudors'] = 'The Tudors'
+serie['dirt'] = 'Dirt'
 
 
 
