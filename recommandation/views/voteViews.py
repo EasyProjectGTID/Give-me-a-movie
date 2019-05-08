@@ -33,8 +33,6 @@ class vote(APIView):
         keywords = self.request.query_params.get('vote')
         serie = self.request.query_params.get('serie')
 
-        print(keywords, serie)
-
         return HttpResponse('ok')
 
     def post(self, *args, **kwargs):
@@ -50,21 +48,25 @@ class vote(APIView):
 def mesVotes(request):
     user = User.objects.get(pk=request.user.pk)
     token, created = Token.objects.get_or_create(user=user)
-    ratings = Rating.objects.filter(user=request.user)
-    like = []
-    dislike = []
+    return render(request, 'mesVotes.html', {"token":token, 'base_url':REACT_URL})
 
+class MyUserVote(APIView):
+    def get(self, *args, **kwargs):
+        user = User.objects.get(pk=self.request.user.pk)
+        token, created = Token.objects.get_or_create(user=user)
+        ratings = Rating.objects.filter(user=self.request.user)
+        resultat_json = []
+        for rate in ratings:
+            resultat_json.append({'pk':rate.serie.id, 'name':rate.serie.real_name, 'vote':rate.rating, 'date':str(rate.date_vote)})
 
-    return render(request, 'mesVotes.html', {'ratings':ratings, "token":token, 'base_url':REACT_URL})
+        return HttpResponse(json.dumps(resultat_json))
 
-
-
-class mesVotesReact(APIView):
+class mesVotesCompute(APIView):
     def get(self, *args, **kwargs):
         ratings = Rating.objects.filter(user=self.request.user)
         like = []
         dislike = []
-        mesSeries = []
+        resultat_json = []
         if ratings:
             for rating in ratings:
 
@@ -73,7 +75,7 @@ class mesVotesReact(APIView):
                 if rating.rating == '0':
                     dislike.append(rating.serie.id)
             resultat = compute(like=like, dislike=dislike)
-            mesSeries = []
+            resultat_json = []
             for res in resultat[0:3]:
                 serie = Series.objects.get(name=res[0])
                 rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
@@ -81,9 +83,9 @@ class mesVotesReact(APIView):
                     afficheVote = False
                 else:
                     afficheVote = True
-                mesSeries.append({'pk':serie.pk, 'name':serie.real_name, 'infos':serie.infos, 'afficheVote':afficheVote})
+                resultat_json.append({'pk':serie.pk, 'name':serie.real_name, 'infos':serie.infos, 'afficheVote':afficheVote})
 
-        return HttpResponse(json.dumps(mesSeries))
+        return HttpResponse(json.dumps(resultat_json))
 
 
 @login_required()
