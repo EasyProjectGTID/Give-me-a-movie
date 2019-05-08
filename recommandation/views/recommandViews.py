@@ -48,9 +48,8 @@ class recommandView(APIView):
 
 		resultat = compute(like=self.request.data['like'], dislike=self.request.data['dislike'])
 		resultat_json = []
-		print('resultat', resultat)
 		for res in resultat[0:3]:
-			print(res)
+
 			serie = Series.objects.get(name=res[0])
 			rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
 			if rating:

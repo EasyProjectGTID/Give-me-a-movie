@@ -23,11 +23,11 @@ r = redis.Redis(host='localhost', port=6379, db=2)
 
 def index(request):
     if request.user.is_anonymous:
-        return render(request, 'base.html')
+        return render(request, 'index.html')
     else:
         user = User.objects.get(pk=request.user.pk)
         token, created = Token.objects.get_or_create(user=user)
-        return render(request, 'base.html', {'user': user, 'token': token, 'base_url':REACT_URL})
+        return render(request, 'index.html', {'user': user, 'token': token, 'base_url':REACT_URL})
 
 
 class rechercheView(APIView):

@@ -20,9 +20,20 @@
                 {% endif %}
              {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}"> <i class="fas fa-user-circle"></i> Mes votes</a>
+                        <a class="nav-link" href="{% url 'mesvotes' %}"> <i class="fas fa-plus-square"></i> Mes votes</a>
                     </li>
+
+
+
+
                 {% endif %}
+
+            {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mesvotes' %}"> <i class="fas fa-fire-alt"></i> Populaire</a>
+                    </li>
+
+            {% endif %}
 
             </ul>
         </div>

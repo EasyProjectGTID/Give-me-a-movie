@@ -6,7 +6,7 @@ from django.contrib import admin as ad
 from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
 from recommandation.views.adminViews import admin, allSerieView
 from recommandation.views.monCompteViews import Profile
-from recommandation.views.voteViews import vote
+from recommandation.views.voteViews import vote, mesVotes, deleteVote, mesVotesReact
 from recommandation.views.recommandViews import recommandTemplate, recommandView
 
 
@@ -22,6 +22,10 @@ urlpatterns = [
     path('vote', vote.as_view(), name='vote'),
     path('recommand', recommandTemplate, name='recommand'),
     path('recommand-api', recommandView.as_view(), name='recommand-api'),
+
+    path('mesvotes', mesVotes, name='mesvotes'),
+    path('mesvotesreact',mesVotesReact.as_view(), name="mesvotesreact"),
+    path('deletevote/<id>', deleteVote, name='deleteVote'),
 
     #Gestion du login
     path('login', user_login, name='login'),

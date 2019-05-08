@@ -15,7 +15,8 @@ class Series(models.Model):
             return self.name
 
     class Meta:
-        verbose_name_plural = "Series"
+        verbose_name = 'Les series'
+        verbose_name_plural = 'Les series'
 
     
 
@@ -29,9 +30,13 @@ class Rating(models.Model):
     rating = models.CharField(max_length=1, choices=RATE)
     serie = models.ForeignKey(Series, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    date_vote = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (("rating", "serie", "user"),)
+        verbose_name = 'Les votes'
+        verbose_name_plural = 'Les votes'
+
     def __str__(self):
         return self.user.username + ' a voté ' + self.get_rating_display() + ' ' +  self.serie.__str__()
 
@@ -43,6 +48,9 @@ class KeyWords(models.Model):
 
     def __str__(self):
         return str(self.key)
+    class Meta:
+        verbose_name = 'Les mots cités dans les series'
+        verbose_name_plural = 'Les mots cités dans les series'
 
 class Posting(models.Model):
     number = models.IntegerField()
