@@ -27,6 +27,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = '127.0.0.1'
 
+
+REACT_URL = 'http://127.0.0.1:8000/'
 # Application definition
 
 INSTALLED_APPS = [

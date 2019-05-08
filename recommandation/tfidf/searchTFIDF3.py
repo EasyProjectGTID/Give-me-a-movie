@@ -15,7 +15,7 @@ def calculTf(word, serie_pk):
         "SELECT p.tf FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE s.id = '{0}' AND p.series_id=s.id AND p.keywords_id=k.id AND k.key ='{1}'".format(
             serie_pk, word))
     tf = cur.fetchall()
-    return float(tf[0][0])
+    return tf[0][0]
 
 
 
@@ -23,8 +23,8 @@ def idf(word):
     cur.execute(
         "SELECT idf FROM recommandation_keywords as k WHERE k.key = '{}'".format(word))
     resultat = cur.fetchall()
-    print(resultat)
-    return resultat
+
+    return resultat[0][0]
 
 def tfIdf(word, liste_series):
     res = dict()
@@ -36,7 +36,7 @@ def tfIdf(word, liste_series):
         serie_name = cur.fetchall()
 
 
-        res[serie_name[0][0]] = float(tf * idf_du_mot)
+        res[serie_name[0][0]] = tf * idf_du_mot
     return res
 
 
@@ -51,7 +51,7 @@ def search(keywords):
     start = time.time()
     dict_res = dict()
     for mot in liste_mots:
-        mot = stemmer.stem(mot)
+        #mot = stemmer.stem(mot)
         print(mot)
 
         cur.execute(
@@ -63,13 +63,14 @@ def search(keywords):
                 if dict_res.get(key):
                     dict_res[key] = dict_res[key] + value
                 else:
-                    dict_res[key] = value * 100
+                    dict_res[key] = value
         except:
             pass
+    end = time.time()
+    print('temps', end - start)
     return sorted(dict_res.items(), key=operator.itemgetter(1), reverse=True)
 
 
 
 
-#print(search('plane crash island'))
-print(idf('surviv'))
+#print(search('medecin chirurgie gallagher'))

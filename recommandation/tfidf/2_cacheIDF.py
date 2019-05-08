@@ -21,11 +21,11 @@ def idf(word):
             word))
     documentWithTermCount = cur.fetchall()
     #print('len de la collection', lenCol)
-    #print('document with term', documentWithTermCount)
-    #result = float(math.log2(lenCol / documentWithTermCount[0][0]))
-    result = float(math.log2(lenCol / 5))
 
-    return round(result,6)
+    result = math.log2(lenCol / documentWithTermCount[0][0])
+
+
+    return result
 
 
 def putIDF_cache():
@@ -43,13 +43,12 @@ def putIDF_cache():
         cur.execute("UPDATE recommandation_keywords set idf = '{}' where recommandation_keywords.id = '{}'".format(idf(mot[1]), mot[0]))
         if i % 100 == 0:
             print('{} / {}'.format(i, taille[0][0]))
-        #r.set(str(mot[0]), str(idf(mot[0], cur)))
 
     conn.commit()
 
 lenCol = lenCollection()
 putIDF_cache()
-# print(idf('survive'))
+
 # print(idf('people'))
 
 

@@ -11,7 +11,7 @@ from collections import Counter
 import redis
 from nltk import cluster
 
-r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True, db=1)
+#r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True, db=1)
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 
 
@@ -41,7 +41,7 @@ def buildVector(seriename, serie1, serie2):
         counter2_c[k[0]] = k[1]
 
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
-    longueur = len(all_items)
+
     vector1 = [float(counter1_c[k]) for k in all_items]
     vector2 = [float(counter2_c[k]) for k in all_items]
 
@@ -50,18 +50,21 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='breakingbad'")
+    "select s.id from recommandation_series s where s.name='house'")
 serie_id = cur.fetchall()[0][0]
-
+print(serie_id)
 cur.execute(
     "select * from mv_{}".format(serie_id))
 serie_comparer = cur.fetchall()
 
+
 cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
 others = cur.fetchall()
+
 resultat = []
 start = time.time()
 for other in others:
+
     cur.execute("select s.name from recommandation_series s where s.id='{}'".format(other[0]))
     seriename = cur.fetchall()[0][0]
 

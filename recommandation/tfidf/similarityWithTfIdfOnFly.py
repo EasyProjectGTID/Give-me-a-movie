@@ -14,15 +14,6 @@ from nltk import cluster
 from scipy import spatial
 
 conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
-# def cosine_distance(seriename, u, v):
-#     """
-#     Returns the cosine of the angle between vectors v and u. This is equal to
-#     u.v / |u||v|.
-#     """
-#
-#
-#
-#     return (seriename,  round(numpy.dot(u, v) / Decimal(math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))),5))
 
 def cosine_distance(seriename, u, v):
     """
@@ -56,7 +47,7 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='house'")
+    "select s.id from recommandation_series s where s.name='xfiles'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

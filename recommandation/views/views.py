@@ -16,6 +16,7 @@ import redis
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework import permissions
+from PTUT.settings import REACT_URL
 
 r = redis.Redis(host='localhost', port=6379, db=2)
 
@@ -26,7 +27,7 @@ def index(request):
     else:
         user = User.objects.get(pk=request.user.pk)
         token, created = Token.objects.get_or_create(user=user)
-        return render(request, 'base.html', {'user': user, 'token': token})
+        return render(request, 'base.html', {'user': user, 'token': token, 'base_url':REACT_URL})
 
 
 class rechercheView(APIView):
@@ -145,24 +146,3 @@ class lastRecentView(APIView):
 
 
 
-# class MyRecommandation(APIView):
-#     authentication_classes = (TokenAuthentication, SessionAuthentication,)
-#     def get(self, *args, **kwargs):
-#             print(self.request.user)
-#             resultat_json = []
-#             ratings = Rating.objects.filter(user=self.request.user, rating='1')
-#             for rating in ratings:
-#                 resultat = pickle.loads(r.get(rating.serie.pk))
-#                 for pk in resultat:
-#
-#                     serie = Series.objects.get(id=pk[0])
-#
-#                     rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
-#                     if rating:
-#                         afficheVote = False
-#                     else:
-#                         afficheVote = True
-#
-#                     resultat_json.append(
-#                         {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
-#             return HttpResponse(json.dumps(resultat_json))

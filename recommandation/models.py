@@ -50,3 +50,8 @@ class Posting(models.Model):
     keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True)
     tf = models.FloatField(null=True)
 
+
+# class Similarity(models.Model):
+#     serie = models.ForeignKey(Series)
+#     similar_to = models.ForeignKey(Series, null=True)
+#     score = models.FloatField(null=True)

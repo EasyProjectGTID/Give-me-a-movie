@@ -17,6 +17,11 @@ class Seriesdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(KeyWords)
+class KeyWordsAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Posting)
 class PostingAdmin(admin.ModelAdmin):
     pass

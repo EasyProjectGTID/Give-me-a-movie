@@ -9,12 +9,11 @@ import re
 from nltk.corpus import stopwords
 import time
 from nltk.stem import PorterStemmer
-from nltk.stem.snowball import FrenchStemmer, EnglishStemmer
-
+import unidecode
 from PTUT.settings import DATABASES
 
-cachedStopWords = stopwords.words("french") + stopwords.words("english")
 
+cachedStopWords = stopwords.words("french") + stopwords.words("english")
 
 def getWords(text):
     return re.findall('\w+', text)
@@ -25,8 +24,8 @@ def getKey(item):
 def calculTf(corpus, maxi):
     resultat = dict()
     for word, number in corpus.items():
-        resultat[word] = (number, round(number / maxi, 3))
-    print(sorted(resultat.items(), key=operator.itemgetter(1), reverse=True))
+        resultat[word] = (number, round(number / maxi, 4))
+    #print(sorted(resultat.items(), key=operator.itemgetter(1), reverse=True))
     return resultat
 
 def maxNB(corpus):
@@ -40,28 +39,18 @@ def read_srt_files(listSrt):
 
 
     for episode in listSrt:
-        #print(episode)
-
         subs = pysrt.open(episode, encoding='iso-8859-1')
-        # language = detect_language(subs.text[0:1000])
-        # if language == 'french':
-        #     stemmer = FrenchStemmer()
-        # elif language == 'english':
-        #     stemmer = EnglishStemmer()
-        # else:
         stemmer = PorterStemmer()
 
         tokens = nltk.word_tokenize(subs.text)
+        #words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
 
-        words = [stemmer.stem(w.lower()) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
-
-        #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
+        words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
 
         corpus.update(words)
 
-
     maxi = maxNB(corpus)
-    print('maxi', maxi)
+
 
     corpusWithTf = calculTf(corpus, maxi)
 
@@ -75,6 +64,7 @@ def insertInDatabase(serieName, corpus, lenCorpus):
     serie_id = cur.fetchone()[0]
 
     for word, value in corpus.items():
+
         # try:
         key_id =cur.execute(
             "INSERT INTO recommandation_keywords (key) VALUES ('{0}') ON CONFLICT (key) DO UPDATE set key='{0}' returning id".format(word))

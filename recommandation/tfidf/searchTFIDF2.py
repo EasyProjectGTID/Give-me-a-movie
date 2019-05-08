@@ -15,7 +15,7 @@ def calculTf(word, serie_pk):
         "SELECT p.tf FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE s.id = '{0}' AND p.series_id=s.id AND p.keywords_id=k.id AND k.key ='{1}'".format(
             serie_pk, word))
     tf = cur.fetchall()
-    return float(tf[0][0])
+    return tf[0][0]
 
 def lenCollection():
     cur.execute(
@@ -40,7 +40,7 @@ def tfIdf(word, liste_series):
         serie_name = cur.fetchall()
 
 
-        res[serie_name[0][0]] = round(100 * float(tf * idf_du_mot),2)
+        res[serie_name[0][0]] = round(float(tf * idf_du_mot),2)
     return res
 
 
@@ -55,7 +55,7 @@ def search(keywords):
     start = time.time()
     dict_res = dict()
     for mot in liste_mots:
-        #mot = stemmer.stem(mot)
+        mot = stemmer.stem(mot)
         print(mot)
 
         cur.execute(
@@ -70,9 +70,11 @@ def search(keywords):
                     dict_res[key] = value
         except:
             pass
+    end = time.time()
+    print('temps', end - start)
     return sorted(dict_res.items(), key=operator.itemgetter(1), reverse=True)
 
 
 
 
-print(search('surviv'))
+#print(search('cancer medecin'))

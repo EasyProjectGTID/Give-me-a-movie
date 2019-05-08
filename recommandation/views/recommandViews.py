@@ -14,7 +14,8 @@ import redis
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework import permissions
-
+from recommandation.tfidf.recommandationCompute import compute
+from PTUT.settings import REACT_URL
 r = redis.Redis(host='localhost', port=6379, db=2)
 
 
@@ -22,7 +23,7 @@ r = redis.Redis(host='localhost', port=6379, db=2)
 def recommandTemplate(request):
 	user = User.objects.get(pk=request.user.pk)
 	token, created = Token.objects.get_or_create(user=user)
-	return render(request, 'recommand.html', {'user': user, 'token': token})
+	return render(request, 'recommand.html', {'user': user, 'token': token, 'base_url':REACT_URL})
 
 
 class recommandView(APIView):
@@ -44,7 +45,22 @@ class recommandView(APIView):
 		return HttpResponse(json.dumps(resultat_json))
 
 	def post(self, *args, **kwargs):
-		pass
+
+		resultat = compute(like=self.request.data['like'], dislike=self.request.data['dislike'])
+		resultat_json = []
+		print('resultat', resultat)
+		for res in resultat[0:3]:
+			print(res)
+			serie = Series.objects.get(name=res[0])
+			rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
+			if rating:
+				afficheVote = False
+			else:
+				afficheVote = True
+			resultat_json.append({'pk':serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
+
+
+		return HttpResponse(json.dumps(resultat_json))
 
 
 

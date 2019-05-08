@@ -1,6 +1,7 @@
 from django.urls import path
 from recommandation.views import index, user_login, logout_user
 from recommandation.views import register
+from django.contrib import admin as ad
 
 from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
 from recommandation.views.adminViews import admin, allSerieView
@@ -8,6 +9,8 @@ from recommandation.views.monCompteViews import Profile
 from recommandation.views.voteViews import vote
 from recommandation.views.recommandViews import recommandTemplate, recommandView
 
+
+ad.site.site_header = 'Gimme a Movie'
 urlpatterns = [
     path('', index, name='index'),
 
