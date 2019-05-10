@@ -27,11 +27,6 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
-
-
-
-
-
 @login_required(login_url='login')
 def logout_user(request):
     logout(request)

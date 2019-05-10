@@ -7,9 +7,10 @@ cur = conn.cursor()
 cur.execute(
     "select s.id, s.name from recommandation_series s")
 others = cur.fetchall()
+i = 0
 for other in others:
 
-
+    i += 1
     cur.execute(
         "CREATE MATERIALIZED VIEW IF NOT EXISTS  mv_{} "
         "AS select k.key, (p.tf*k.idf) as tfidf from recommandation_keywords k, recommandation_posting p, recommandation_series s "
@@ -17,7 +18,7 @@ for other in others:
         "AND s.id = p.series_id "
         "AND s.id='{}'".format(str(other[0]),other[0]))
     conn.commit()
-
+    print(i)
 #drop
 # for i in range(200):
 #     print(i)

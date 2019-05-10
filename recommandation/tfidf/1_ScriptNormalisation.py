@@ -10,7 +10,10 @@ from nltk.corpus import stopwords
 import time
 from nltk.stem import PorterStemmer
 import unidecode
+from nltk.stem.snowball import FrenchStemmer, EnglishStemmer
+
 from PTUT.settings import DATABASES
+from recommandation.tfidf.detectLanguage import detect_language
 
 
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
@@ -40,12 +43,18 @@ def read_srt_files(listSrt):
 
     for episode in listSrt:
         subs = pysrt.open(episode, encoding='iso-8859-1')
-        stemmer = PorterStemmer()
+
+        language = detect_language(subs.text[0:1000])
+        if language == 'french':
+            stemmer = FrenchStemmer()
+        elif language == 'english':
+            stemmer = EnglishStemmer()
+        #stemmer = PorterStemmer()
 
         tokens = nltk.word_tokenize(subs.text)
-        #words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
+        words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
 
-        words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
+        #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
 
         corpus.update(words)
 

@@ -18,7 +18,12 @@ class Series(models.Model):
         verbose_name = 'Les series'
         verbose_name_plural = 'Les series'
 
-    
+class SearchCount(models.Model):
+    search_key = models.CharField(max_length=35, null=True, unique=True)
+    count = models.IntegerField()
+
+    def __str__(self):
+        return self.search_key + ' Nombre de recherche : ' + str(self.count)
 
 
 class Rating(models.Model):
@@ -59,7 +64,7 @@ class Posting(models.Model):
     tf = models.FloatField(null=True)
 
 
-# class Similarity(models.Model):
-#     serie = models.ForeignKey(Series)
-#     similar_to = models.ForeignKey(Series, null=True)
-#     score = models.FloatField(null=True)
+class Similarity(models.Model):
+    serie = models.ForeignKey(Series, null=True, on_delete=models.PROTECT, related_name='serie')
+    similar_to = models.ForeignKey(Series, null=True, on_delete=models.PROTECT, related_name='similar_to')
+    score = models.FloatField(null=True)

@@ -34,25 +34,33 @@ def buildVector(seriename, serie1, serie2):
 
     counter1_c = Counter()
     counter2_c = Counter()
-
+    s1 = time.time()
     for k in counter1:
         counter1_c[k[0]] = k[1]
     for k in counter2:
         counter2_c[k[0]] = k[1]
+    s1e = time.time()
+    print('s1', s1e -s1)
 
+    s2 = time.time()
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
+    s2e = time.time()
+    print('s2', s2e - s2)
 
+    s3 = time.time()
     vector1 = [float(counter1_c[k]) for k in all_items]
     vector2 = [float(counter2_c[k]) for k in all_items]
+    s3e = time.time()
+    print('s3', s3e - s3)
 
     return seriename, vector1, vector2
 
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='house'")
+    "select s.id from recommandation_series s where s.name='extras'")
 serie_id = cur.fetchall()[0][0]
-print(serie_id)
+
 cur.execute(
     "select * from mv_{}".format(serie_id))
 serie_comparer = cur.fetchall()

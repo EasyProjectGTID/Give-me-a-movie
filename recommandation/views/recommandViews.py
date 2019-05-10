@@ -16,7 +16,9 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from recommandation.tfidf.recommandationCompute import compute
 from PTUT.settings import REACT_URL
-r = redis.Redis(host='localhost', port=6379, db=2)
+from recommandation.views import afficheVoteFn
+
+
 
 
 @login_required()
@@ -27,15 +29,15 @@ def recommandTemplate(request):
 
 
 class recommandView(APIView):
-
-
-	# permission_classes = (permissions.IsAuthenticated)
-	# authentication_classes = (TokenAuthentication, SessionAuthentication,)
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (TokenAuthentication,)
 
 	def get(self, *args, **kwargs):
 		"""
-		   :param request:
-		   :return: utiliser pour la recherche
+
+		:param args:
+		:param kwargs:
+		:return:
 		"""
 
 		series = Series.objects.all()
@@ -45,19 +47,21 @@ class recommandView(APIView):
 		return HttpResponse(json.dumps(resultat_json))
 
 	def post(self, *args, **kwargs):
+		"""
 
+		:param args:
+		:param kwargs:
+		:return: Donne le résultat des recommandations compute dans l'onglet recommandez moi
+		"""
+		print(self.request.data)
 		resultat = compute(like=self.request.data['like'], dislike=self.request.data['dislike'])
 		resultat_json = []
+		print(resultat)
 		for res in resultat[0:3]:
 
-			serie = Series.objects.get(name=res[0])
-			rating = Rating.objects.filter(user=self.request.user, serie=serie).exists()
-			if rating:
-				afficheVote = False
-			else:
-				afficheVote = True
+			serie = Series.objects.get(id=res[0])
+			afficheVote = afficheVoteFn(user=self.request.user, serie=serie)
 			resultat_json.append({'pk':serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
-
 
 		return HttpResponse(json.dumps(resultat_json))
 

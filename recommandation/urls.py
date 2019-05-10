@@ -3,10 +3,11 @@ from recommandation.views import index, user_login, logout_user
 from recommandation.views import register
 from django.contrib import admin as ad
 
+from recommandation.views.cloudWordsViews import SearchCountApi
 from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
 from recommandation.views.adminViews import admin, allSerieView
 from recommandation.views.monCompteViews import Profile
-from recommandation.views.voteViews import vote, mesVotes, deleteVote, mesVotesCompute, MyUserVote
+from recommandation.views.voteViews import vote, mesVotes, mesVotesCompute, MyUserVote
 from recommandation.views.recommandViews import recommandTemplate, recommandView
 
 
@@ -25,9 +26,11 @@ urlpatterns = [
 
     path('mesvotes', mesVotes, name='mesvotes'),
     path('mesvotescompute',mesVotesCompute.as_view(), name="mesvotescompute"),
-    path('MyUserVote',MyUserVote.as_view(), name="MyUserVote"),
-    path('deletevote/<id>', deleteVote, name='deleteVote'),
+    path('MyUserVote/<pk>/', MyUserVote.as_view(), name="MyUserVote"),
+    path('MyUserVote', MyUserVote.as_view(), name="MyUserVote"),
 
+
+    path('search-count', SearchCountApi.as_view(), name='search-count'),
     #Gestion du login
     path('login', user_login, name='login'),
     path('logout', logout_user, name='logout'),
