@@ -16,7 +16,7 @@ import redis
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework import permissions
-from PTUT.settings import REACT_URL
+from PTUT.settings import REACT_URL, POSTER_URL
 from recommandation.views.utils import afficheVoteFn, recherche_history
 
 
@@ -48,6 +48,7 @@ class rechercheView(APIView):
 
             for serie in res[0:4]:
                 serie = Series.objects.get(name=serie[0])
+                serie.infos['Poster'] = str(POSTER_URL + str(serie.image_local))
                 afficheVote = afficheVoteFn(user=self.request.user, serie=serie) # On regarde si on affiche le vote au cas ou l'utilisateur aurait déjà voté
 
                 resultat_json.append(
@@ -59,6 +60,7 @@ class rechercheView(APIView):
             res = search(keywords)
             for serie in res[0:4]:
                 serie = Series.objects.get(name=serie[0])
+                serie.infos['Poster'] = str(POSTER_URL + str(serie.image_local))
                 resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
             return HttpResponse(json.dumps(resultat_json))
 
@@ -80,6 +82,7 @@ class similarItemsView(APIView):
 
                 serie = Series.objects.get(id=similar.similar_to.id)
                 afficheVote = afficheVoteFn(user=self.request.user, serie=serie.id)
+                serie.infos['Poster'] = str(POSTER_URL + str(serie.image_local))
 
                 resultat_json.append(
                     {'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
@@ -91,6 +94,7 @@ class similarItemsView(APIView):
             resultat_json = []
             for similar in resultat[0:3]:
                 serie = Series.objects.get(id=similar.similar_to.id)
+                serie.infos['Poster'] = str(POSTER_URL + str(serie.image_local))
                 resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
             return HttpResponse(json.dumps(resultat_json))
 
@@ -98,7 +102,7 @@ class similarItemsView(APIView):
 
 class lastRecentView(APIView):
     # permission_classes = (permissions.IsAuthenticated)
-    authentication_classes = (TokenAuthentication,)
+    #authentication_classes = (TokenAuthentication,)
 
     def get(self, *args, **kwargs):
 
@@ -112,7 +116,7 @@ class lastRecentView(APIView):
                     pass
             resultat_json = []
             for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True):
-
+                serie[0].infos['Poster'] = str(POSTER_URL + str(serie[0].image_local))
                 afficheVote = afficheVoteFn(user=self.request.user, serie=serie[0])
                 resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos, 'afficheVote': afficheVote})
             return HttpResponse(json.dumps(resultat_json))
@@ -127,6 +131,7 @@ class lastRecentView(APIView):
                     pass
             resultat_json = []
             for serie in sorted(serieToOrder.items(), key=itemgetter(1), reverse=True):
+                serie[0].infos['Poster'] = str(POSTER_URL + str(serie[0].image_local))
                 resultat_json.append({'pk': serie[0].pk, 'name': serie[0].real_name, 'infos': serie[0].infos,'afficheVote': True })
             return HttpResponse(json.dumps(resultat_json))
 

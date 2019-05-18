@@ -26,9 +26,6 @@ class RegisterForm(UserCreationForm):
 
 
 
-
-
-
     class Meta:
         model = User
 

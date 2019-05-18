@@ -7,7 +7,7 @@ class Series(models.Model):
     max_keyword_nb = models.IntegerField(blank=True, null=True)
     real_name = models.CharField(max_length=100, blank=True, null=True)
     infos = JSONField(blank=True, null=True)
-
+    image_local = models.ImageField(null=True)
     def __str__(self):
         if self.real_name:
             return self.real_name
@@ -15,7 +15,7 @@ class Series(models.Model):
             return self.name
 
     class Meta:
-        verbose_name = 'Les series'
+        verbose_name = 'Une series'
         verbose_name_plural = 'Les series'
 
 class SearchCount(models.Model):

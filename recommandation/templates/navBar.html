@@ -3,7 +3,7 @@
 
     <nav class="navbar navbar-expand-md navbar-dark bg-blue">
         <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            <ul class="navbar-nav mr-auto">
+ <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}"> <i class="fas fa-home"></i> Accueil <span
                             class="sr-only">(current) </span></a>
@@ -13,27 +13,25 @@
                         <a class="nav-link" href="{% url 'profile' %}"> <i class="fas fa-user-circle"></i> Mon compte</a>
                     </li>
                 {% endif %}
-             {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'recommand' %}"> <i class="fas fa-question-circle"></i> Recommandez moi</a>
                     </li>
                 {% endif %}
-             {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'mesvotes' %}"> <i class="fas fa-plus-square"></i> Mes votes</a>
                     </li>
 
 
-
-
                 {% endif %}
 
-            {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'mesvotes' %}"> <i class="fas fa-fire-alt"></i> Populaire</a>
+                        <a class="nav-link" href="{% url 'populaire' %}"> <i class="fas fa-fire-alt"></i> Populaire</a>
                     </li>
 
-            {% endif %}
+                {% endif %}
 
             </ul>
         </div>
@@ -47,7 +45,7 @@
             <ul class="navbar-nav ml-auto">
                 {% if user.is_superuser %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'administrateur' %}"> <i class="fas fa-tools"></i> Administration</a>
+                        <a class="nav-link" href="{% url 'admin:index' %}"> <i class="fas fa-tools"></i> Administration</a>
                     </li>
                 {% endif %}
 

@@ -17,9 +17,14 @@ def register(request):
             user.password = form.cleaned_data["password1"]
             user.email = form.cleaned_data["email"]
             user.save()
-            return redirect('/login')
+            login(request, user)
+
         else:
             messages.add_message(request, messages.INFO, form.errors)
 
     form = RegisterForm()
     return render(request, 'register.html', {'form': form})
+
+
+def passwordRecovery(request):
+    return render(request, 'password-recovery.html')

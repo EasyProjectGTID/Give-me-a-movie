@@ -11,7 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from rest_framework.authtoken.models import Token
 
-from PTUT.settings import REACT_URL
+from PTUT.settings import REACT_URL, POSTER_URL
 from recommandation.tfidf.searchTFIDF2 import search
 from recommandation.models import Series, KeyWords, Posting, Rating
 from django.core.cache import cache
@@ -68,6 +68,7 @@ class MyUserVote(APIView):
 		resultat_json = []
 
 		for rate in ratings:
+			rate.serie.infos['Poster'] = str(POSTER_URL + str(rate.serie.image_local))
 			resultat_json.append({'pk': rate.serie.id, 'name': rate.serie.real_name,
 								  'vote': rate.rating,
 								  'date': formats.date_format(rate.date_vote, "SHORT_DATETIME_FORMAT")})
@@ -108,6 +109,7 @@ class mesVotesCompute(APIView):
 			resultat_json = []
 			for res in resultat[0:3]:
 				serie = Series.objects.get(id=res[0])
+				serie.infos['Poster'] = str(POSTER_URL + str(serie.image_local))
 				afficheVote = afficheVoteFn(user=self.request.user, serie=serie)
 				resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
 
