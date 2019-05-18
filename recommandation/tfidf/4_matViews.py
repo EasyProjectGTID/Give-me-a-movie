@@ -1,7 +1,13 @@
 
 import psycopg2
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
+from PTUT import DATABASES
+
+conn = psycopg2.connect(
+        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+                                                                DATABASES['default']['USER'],
+                                                                DATABASES['default']['HOST'],
+                                                                DATABASES['default']['PASSWORD']))
 cur = conn.cursor()
 #
 cur.execute(

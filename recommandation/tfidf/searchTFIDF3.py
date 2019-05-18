@@ -40,8 +40,11 @@ def tfIdf(word, liste_series):
     return res
 
 
-
-conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
+conn = psycopg2.connect(
+    "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+                                                               DATABASES['default']['USER'],
+                                                               DATABASES['default']['HOST'],
+                                                               DATABASES['default']['PASSWORD']))
 cur = conn.cursor()
 
 def search(keywords):

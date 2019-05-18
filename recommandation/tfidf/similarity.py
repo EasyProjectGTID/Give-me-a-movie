@@ -12,8 +12,11 @@ import redis
 from nltk import cluster
 
 #r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True, db=1)
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
-
+conn = psycopg2.connect(
+        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+                                                                DATABASES['default']['USER'],
+                                                                DATABASES['default']['HOST'],
+                                                                DATABASES['default']['PASSWORD']))
 
 
 

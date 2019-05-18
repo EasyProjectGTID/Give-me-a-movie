@@ -103,7 +103,10 @@ def walk_sub(directory):
     return seriesPath
 
 
-conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'], DATABASES['default']['USER'], DATABASES['default']['HOST'] ))
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+                                                                                DATABASES['default']['USER'],
+                                                                                DATABASES['default']['HOST'],
+                                                                                DATABASES['default']['PASSWORD']))
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
 
 tot = 0

@@ -1,20 +1,19 @@
 import operator
 import time
-from decimal import Decimal
-
 import numpy
 import psycopg2
-import numpy as np
-import math
+
 import math
 from collections import Counter
-import pandas as pd
-import scipy
-from nltk import cluster
-from scipy import spatial
 
-conn = psycopg2.connect("dbname='django123' user='postgres' host='localhost' password=''")
 
+from PTUT import DATABASES
+
+conn = psycopg2.connect(
+        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+                                                                DATABASES['default']['USER'],
+                                                                DATABASES['default']['HOST'],
+                                                                DATABASES['default']['PASSWORD']))
 def cosine_distance(seriename, u, v):
     """
     Returns the cosine of the angle between vectors v and u. This is equal to

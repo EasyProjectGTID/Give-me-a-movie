@@ -3,9 +3,10 @@ from PTUT.settings import DATABASES
 import psycopg2
 
 conn = psycopg2.connect(
-        "dbname='{0}' user='{1}' host='{2}' password=''".format(DATABASES['default']['NAME'],
+        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
                                                                 DATABASES['default']['USER'],
-                                                                DATABASES['default']['HOST']))
+                                                                DATABASES['default']['HOST'],
+                                                                DATABASES['default']['PASSWORD']))
 cur = conn.cursor()
 
 def lenCollection():
