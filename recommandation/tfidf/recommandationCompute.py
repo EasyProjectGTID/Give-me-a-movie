@@ -113,6 +113,6 @@ def filtering(resultat, like=None, dislike=None):
 	resultat = [x for x in resultat if x[0] not in dislike]
 	return resultat
 
-like = [16, 111, 52, 75]
-dislike = []
-compute(like=like, dislike=dislike)
+# like = [16, 111, 52, 75]
+# dislike = []
+# compute(like=like, dislike=dislike)

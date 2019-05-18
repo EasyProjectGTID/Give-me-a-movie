@@ -47,8 +47,8 @@ def putIDF_cache():
 
     conn.commit()
 
-lenCol = lenCollection()
-putIDF_cache()
+# lenCol = lenCollection()
+# putIDF_cache()
 
 # print(idf('people'))
 
