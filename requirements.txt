@@ -12,3 +12,5 @@ redis
 django-redis-cache
 django-redis
 djangorestframework
+pillow
+django-rq
