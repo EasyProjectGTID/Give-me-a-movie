@@ -4,10 +4,6 @@ body{
     background: rgb(11,133,161);
     background: radial-gradient(circle, rgba(11,133,161,1) 0%, rgba(34,0,57,1) 100%)
 }
-* {
-    font-family: 'Open Sans', sans-serif !important;
-
-}
 
 p{
     color:white;
@@ -18,4 +14,12 @@ p{
     width: 39%;
     background-color: rgba(201, 201, 201, 0.738);
     height: 1px;
+}
+
+h2{
+    color:darkslategrey;
+}
+
+h3{
+    color:darkslategrey;
 }

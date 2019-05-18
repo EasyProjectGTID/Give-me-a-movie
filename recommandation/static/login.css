@@ -9,6 +9,9 @@ background-repeat: no-repeat;
 height: 100%;
 font-family: 'Numans', sans-serif;
 }
+.app{
+    color:white;
+}
 
 .container{
 height: 100%;
@@ -16,7 +19,7 @@ align-content: center;
 }
 
 .card{
-height: 370px;
+
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;

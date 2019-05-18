@@ -27,9 +27,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = '127.0.0.1'
 
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
 
 REACT_URL = 'http://127.0.0.1:8000/'
 # Application definition
+
+POSTER_URL = 'http://127.0.0.1:8000'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,8 +46,18 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    "django_rq",
 
 ]
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
 
 REST_FRAMEWORK = {
 
