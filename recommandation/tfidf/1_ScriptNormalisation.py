@@ -23,7 +23,8 @@ def getWords(text):
 
 def getKey(item):
     return item[1]
-
+#"""retourne à partir du dictionnaire corpus [mots - nboccurences ] et du maximum d'occurence
+#dans ce même corpus un dictionnaire resultat[mot-tf} avec tf arrondi à 3 chiffres Ce dictionnaire est trié par ordre décroissant de tf"""
 def calculTf(corpus, maxi):
     resultat = dict()
     for word, number in corpus.items():
@@ -37,11 +38,16 @@ def maxNB(corpus):
 
 
 
-def read_srt_files(listSrt):
+def read_srt_files(listSrt): #retourne un dictionnaire contenant en valeur un dictionnaire [mot-tf] et en clé le nombre
+    #d'occurence du mot le plus cité dans le corpus
     corpus = collections.Counter()
 
 
     for episode in listSrt:
+        #"""pour chaque fichier srt d'une série, on sépare chaque mot de ce srt,
+        #on les stemme avant de regrouper les similaires et de les compter. ce regroupement est commun pour tous les srts"""
+        #print(episode)
+
         subs = pysrt.open(episode, encoding='iso-8859-1')
 
         language = detect_language(subs.text[0:1000])
@@ -54,6 +60,8 @@ def read_srt_files(listSrt):
         tokens = nltk.word_tokenize(subs.text)
         words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
 
+        words = [stemmer.stem(w.lower()) for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
+        """words est une liste de mots stemmés pour un épisode"""
         #words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 3 and w.lower().isalpha()]
 
         corpus.update(words)
@@ -63,7 +71,7 @@ def read_srt_files(listSrt):
 
     corpusWithTf = calculTf(corpus, maxi)
 
-    return {'corpus':corpusWithTf, 'lenCorpus':maxi}
+    return {'corpus':corpusWithTf, 'lenCorpus':maxi} #maxi est le mot qui apparait le plus dans le corpus
 
 def insertInDatabase(serieName, corpus, lenCorpus):
 
@@ -88,6 +96,8 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 
 def walk_sub(directory):
     """ Parcours du dossier de sous titres retourne un dictionnaire"""
+    """le dictionnaire contient en clés le nom des répertoires contenu dans directory, la variable passsée en en-tête
+    et en valeurs une liste contenant le chemin vers les srt"""
     seriesPath = dict()
     for root in os.scandir(directory):
 
@@ -116,7 +126,7 @@ for key, value in subs.items():
 
 
     start = time.time()
-    text = read_srt_files(value)
+    text = read_srt_files(value) #"""value est ici une liste de chemin vers les srt d'une série"""
     end = time.time()
 
     startbdd = time.time()
