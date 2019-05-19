@@ -14,3 +14,4 @@ django-redis
 djangorestframework
 pillow
 django-rq
+gunicorn
