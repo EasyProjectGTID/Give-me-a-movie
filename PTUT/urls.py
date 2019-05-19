@@ -13,11 +13,28 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 
+from PTUT import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('recommandation.urls'))
+]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+        url(r'^api-auth/', include('rest_framework.urls'))
+
+        # For django versions before 2.0:
+        # url(r'^__debug__/', include(debug_toolbar.urls)),
+
+    ] + urlpatterns
+
+urlpatterns += [
+    path('django-rq/', include('django_rq.urls'))
 ]

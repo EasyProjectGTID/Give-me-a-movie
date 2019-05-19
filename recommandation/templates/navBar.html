@@ -1,0 +1,74 @@
+{% block navBar %}
+    {% load static %}
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-blue">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+ <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}"> <i class="fas fa-home"></i> Accueil <span
+                            class="sr-only">(current) </span></a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}"> <i class="fas fa-user-circle"></i> Mon compte</a>
+                    </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'recommand' %}"> <i class="fas fa-question-circle"></i> Recommandez moi</a>
+                    </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mesvotes' %}"> <i class="fas fa-plus-square"></i> Mes votes</a>
+                    </li>
+
+
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'populaire' %}"> <i class="fas fa-fire-alt"></i> Populaire</a>
+                    </li>
+
+                {% endif %}
+
+            </ul>
+        </div>
+        <div class="mx-auto order-0">
+            <a class="navbar-brand mx-auto" href="#">Gimme a movie <i class="fas fa-video"></i></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}"> <i class="fas fa-tools"></i> Administration</a>
+                    </li>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}"> <i class="fas fa-sign-out-alt"></i>
+                            Déconnexion</a>
+                    </li>
+                {% endif %}
+
+                {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}"> <i class="fas fa-user"></i> Login</a>
+                    </li>
+                {% endif %}
+                {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}"> <i class="fas fa-sign-in-alt"></i> Inscription</a>
+                    </li>
+                {% endif %}</ul>
+
+        </div>
+    </nav>
+
+
+{% endblock %}

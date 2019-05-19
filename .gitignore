@@ -1,4 +1,4 @@
-
+PTUT/settings.py
 PTUT/__pycache__/
 
 venv/Lib/site-packages/__pycache__/
@@ -10,5 +10,6 @@ recommandation/__pycache__/
 recommandation/forms/__pycache__/
 
 *.pyc
+/venv/
 
 \.idea/
