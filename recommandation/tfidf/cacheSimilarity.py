@@ -12,19 +12,27 @@ import redis
 
 from PTUT import DATABASES
 
-r = redis.Redis(host='localhost', port=6379, db=2)
+r = redis.Redis(host="localhost", port=6379, db=2)
 conn = psycopg2.connect(
-        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
-                                                                DATABASES['default']['USER'],
-                                                                DATABASES['default']['HOST'],
-                                                                DATABASES['default']['PASSWORD']))
+    "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(
+        DATABASES["default"]["NAME"],
+        DATABASES["default"]["USER"],
+        DATABASES["default"]["HOST"],
+        DATABASES["default"]["PASSWORD"],
+    )
+)
+
 
 def cosine_distance(serie_id, u, v):
     """
     Returns the cosine of the angle between vectors v and u. This is equal to
     u.v / |u||v|.
     """
-    return serie_id, numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v)))
+    return (
+        serie_id,
+        numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))),
+    )
+
 
 def buildVector(seriename, serie1, serie2):
 
@@ -49,21 +57,26 @@ def buildVector(seriename, serie1, serie2):
 def construct(serie_pk):
 
     cur.execute(
-        "select s.id from recommandation_series s where s.id='{}'".format(serie_pk))
+        "select s.id from recommandation_series s where s.id='{}'".format(serie_pk)
+    )
     serie_id = cur.fetchall()[0][0]
 
-    cur.execute(
-        "select * from mv_{}".format(serie_id))
+    cur.execute("select * from mv_{}".format(serie_id))
     serie_comparer = cur.fetchall()
 
-    cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
+    cur.execute(
+        "select s.id from recommandation_series s where s.id <> '{}'".format(serie_id)
+    )
     others = cur.fetchall()
     resultat = []
 
     for other in others:
 
-
-        cur.execute("select s.name from recommandation_series s where s.id='{}'".format(other[0]))
+        cur.execute(
+            "select s.name from recommandation_series s where s.id='{}'".format(
+                other[0]
+            )
+        )
         seriename = cur.fetchall()[0][0]
 
         cur.execute("select * from mv_{}".format(other[0]))
@@ -73,20 +86,17 @@ def construct(serie_pk):
         seriename, v1, v2 = buildVector(seriename, serie_comparer, other_words)
         ebv = time.time()
 
-
         scd = time.time()
         resultat.append(cosine_distance(seriename, v1, v2))
         ecd = time.time()
-
 
     resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
     r.set(serie_pk, pickle.dumps(resultat_trier))
 
 
 cur = conn.cursor()
-cur.execute(
-        "select s.id from recommandation_series s")
-series= cur.fetchall()
+cur.execute("select s.id from recommandation_series s")
+series = cur.fetchall()
 
 start = time.time()
 # for serie in series:
@@ -94,7 +104,3 @@ start = time.time()
 #
 # end = time.time()
 # print('tot', end-start)
-
-
-
-

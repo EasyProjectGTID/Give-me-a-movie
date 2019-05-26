@@ -15,3 +15,7 @@ djangorestframework
 pillow
 django-rq
 gunicorn
+black
+gevent
+huey
+django-admin-autocomplete-filter

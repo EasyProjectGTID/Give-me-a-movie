@@ -20,7 +20,7 @@ def cosine_distance(seriename, u, v):
     u.v / |u||v|.
     """
 
-    return (seriename,  (numpy.dot(u, v)) / math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v)))
+    return (seriename, 100* (numpy.dot(u, v)) / math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v)))
 
 
 def buildVector(seriename, serie1, serie2):
@@ -38,15 +38,15 @@ def buildVector(seriename, serie1, serie2):
 
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
 
-    vector1 = [float(counter1_c[k]) for k in all_items]
-    vector2 = [float(counter2_c[k]) for k in all_items]
+    vector1 = [round(float(counter1_c[k]), 3) for k in all_items]
+    vector2 = [round(float(counter2_c[k]), 3) for k in all_items]
 
     return seriename, vector1, vector2
 
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='extras'")
+    "select s.id from recommandation_series s where s.name='bones'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

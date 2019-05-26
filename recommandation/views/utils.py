@@ -22,3 +22,5 @@ def recherche_history(text):
 			search_obj = SearchCount.objects.get(search_key=word)
 			search_obj.count = search_obj.count + 1
 			search_obj.save()
+
+

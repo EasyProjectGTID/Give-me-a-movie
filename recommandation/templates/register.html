@@ -3,32 +3,38 @@
 
 <html>
 <head>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
 
     <link href="{% static 'login.css' %}" rel="stylesheet">
+    <link href="{% static 'css/datepicker.css' %}" rel="stylesheet">
     <title>Inscription</title>
 
-    <script defer src="{% static 'js/all.js' %}"></script>
+    <script src="{% static 'js/all.js' %}"></script>
+
+    <script defer src="{% static 'js/datepicker.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/all.css' %}">
 </head>
 <body>
 {% if messages %}
 
-    <div class="alert alert-danger" role="alert">
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    </div>
-{% endif %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 <div class="container">
 
     <div class="d-flex justify-content-center h-100">
 
+
         <div class="card">
             <div class="card-header">
+
                 <h3>Créer un compte</h3>
                 <div class="d-flex justify-content-end social_icon">
-                <div class="app">Gimme a movie <i class="fas fa-video"></i></div>
+                    <div class="app">Gimme a movie <i class="fas fa-video"></i></div>
 
                 </div>
             </div>
@@ -39,9 +45,19 @@
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                         </div>
 
-                        {{ form.username }}
+                        {{ form.nom }}
 
                     </div>
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+
+                        {{ form.prenom }}
+
+                    </div>
+
+
                     <div class="input-group form-group">
                         <div class="input-group-prepend">
 
@@ -80,6 +96,8 @@
 
         </div>
     </div>
+
 </div>
+
 </body>
 </html>

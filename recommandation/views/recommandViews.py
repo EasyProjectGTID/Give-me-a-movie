@@ -1,4 +1,3 @@
-
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -19,51 +18,59 @@ from PTUT.settings import REACT_URL
 from recommandation.views import afficheVoteFn
 
 
-
-
 @login_required()
 def recommandTemplate(request):
-	user = User.objects.get(pk=request.user.pk)
-	token, created = Token.objects.get_or_create(user=user)
-	return render(request, 'recommand.html', {'user': user, 'token': token, 'base_url':REACT_URL})
+    user = User.objects.get(pk=request.user.pk)
+    token, created = Token.objects.get_or_create(user=user)
+    return render(
+        request, "recommand.html", {"user": user, "token": token, "base_url": REACT_URL}
+    )
 
 
 class recommandView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
-	def get(self, *args, **kwargs):
-		"""
+    def get(self, *args, **kwargs):
+        """
 
 		:param args:
 		:param kwargs:
 		:return:
 		"""
 
-		series = Series.objects.all()
-		resultat_json = []
-		for serie in series:
-			resultat_json.append({'pk': serie.pk, 'name': serie.real_name, 'infos': serie.infos})
-		return HttpResponse(json.dumps(resultat_json))
+        series = Series.objects.all()
+        resultat_json = []
+        for serie in series:
+            resultat_json.append(
+                {"pk": serie.pk, "name": serie.real_name, "infos": serie.infos}
+            )
+        return HttpResponse(json.dumps(resultat_json))
 
-	def post(self, *args, **kwargs):
-		"""
+    def post(self, *args, **kwargs):
+        """
 
 		:param args:
 		:param kwargs:
 		:return: Donne le résultat des recommandations compute dans l'onglet recommandez moi
 		"""
-		print(self.request.data)
-		resultat = compute(like=self.request.data['like'], dislike=self.request.data['dislike'])
-		resultat_json = []
-		print(resultat)
-		for res in resultat[0:3]:
+        print(self.request.data)
+        resultat = compute(
+            like=self.request.data["like"], dislike=self.request.data["dislike"]
+        )
+        resultat_json = []
+        print(resultat)
+        for res in resultat[0:3]:
 
-			serie = Series.objects.get(id=res[0])
-			afficheVote = afficheVoteFn(user=self.request.user, serie=serie)
-			resultat_json.append({'pk':serie.pk, 'name': serie.real_name, 'infos': serie.infos, 'afficheVote': afficheVote})
+            serie = Series.objects.get(id=res[0])
+            afficheVote = afficheVoteFn(user=self.request.user, serie=serie)
+            resultat_json.append(
+                {
+                    "pk": serie.pk,
+                    "name": serie.real_name,
+                    "infos": serie.infos,
+                    "afficheVote": afficheVote,
+                }
+            )
 
-		return HttpResponse(json.dumps(resultat_json))
-
-
-
+        return HttpResponse(json.dumps(resultat_json))

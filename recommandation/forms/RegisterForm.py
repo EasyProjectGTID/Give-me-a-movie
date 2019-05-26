@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -5,30 +7,64 @@ from django.core.exceptions import ValidationError
 import re
 
 
-
-
 class RegisterForm(UserCreationForm):
-    """
-    Formulaire permettant à un particulier de s'inscrire
-    """
+	"""
+	Formulaire permettant à un particulier de s'inscrire
+	"""
 
-    username = forms.RegexField(regex=r'^[^`~!#$%^&*()={}\[\]|\\:;“’<,>?๐฿]*$', widget=forms.TextInput(attrs={'class': "form-control", 'type': "text", 'placeholder': "Nom utilisateur"}))
+	username = forms.RegexField(
+		regex=r"^[^`~!#$%^&*()={}\[\]|\\:;“’<,>?๐฿]*$",
+		widget=forms.TextInput(
+			attrs={
+				"class": "form-control",
+				"type": "text",
+				"placeholder": "Nom utilisateur",
+			}
+		),
+	)
+	nom = forms.CharField(
+		max_length=250,
+		widget=forms.TextInput(
+			attrs={"class": "form-control", "type": "text", "placeholder": "Nom"}
+		),
+	)
+
+	prenom = forms.CharField(
+		max_length=250,
+		widget=forms.TextInput(
+			attrs={"class": "form-control", "type": "text", "placeholder": "Prenom"}
+		),
+	)
 
 
-    email = forms.EmailField(max_length=250,
-        widget=forms.TextInput(attrs={'class': "form-control", 'type': "text", 'placeholder': "Email"}))
-    password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': "form-control", 'type': "password", 'placeholder': "Mot de passe"}))
+	email = forms.EmailField(
+		max_length=250,
+		widget=forms.TextInput(
+			attrs={"class": "form-control", "type": "text", "placeholder": "Email"}
+		),
+	)
+	password1 = forms.CharField(
+		widget=forms.PasswordInput(
+			attrs={
+				"class": "form-control",
+				"type": "password",
+				"placeholder": "Mot de passe",
+			}
+		)
+	)
+
+	password2 = forms.CharField(
+		widget=forms.PasswordInput(
+			attrs={
+				"class": "form-control",
+				"type": "password",
+				"placeholder": "Confirmer votre mot de passe",
+			}
+		)
+	)
 
 
-    password2 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': "form-control", 'type': "password", 'placeholder': "Confirmer votre mot de passe"}))
+	class Meta:
+		model = User
 
-
-
-    class Meta:
-        model = User
-
-        fields = (
-            'username', 'password1', 'password2', 'email')
-
+		fields = ("username", "password1", "password2", "email")

@@ -12,6 +12,8 @@ import redis
 from nltk import cluster
 
 #r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True, db=1)
+from PTUT import DATABASES
+
 conn = psycopg2.connect(
         "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
                                                                 DATABASES['default']['USER'],
@@ -61,7 +63,7 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='extras'")
+    "select s.id from recommandation_series s where s.name='bones'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

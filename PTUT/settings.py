@@ -27,6 +27,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = '127.0.0.1'
 
+from huey import RedisHuey
+from redis import ConnectionPool
+
+pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
+HUEY = RedisHuey('recommandation', connection_pool=pool)
+
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SECURE_SSL_REDIRECT = True
 
@@ -47,6 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "django_rq",
+    "huey.contrib.djhuey",
+    'admin_auto_filters',
 
 ]
 
@@ -122,7 +130,7 @@ WSGI_APPLICATION = 'PTUT.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django123',
+        'NAME': 'django_test',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -169,6 +177,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = (
+    os.path.join(BASE_DIR, 'recommandation/media/'),
+)
 
 STATIC_URL = '/recommandation/static/'
 STATICFILES_DIRS = (

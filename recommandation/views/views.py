@@ -1,3 +1,4 @@
+import csv
 import datetime
 import json
 import pickle
@@ -20,7 +21,16 @@ from PTUT.settings import REACT_URL, POSTER_URL
 from recommandation.views.utils import afficheVoteFn, recherche_history
 
 
+def export_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
 
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+
+    return response
 
 def index(request):
     if request.user.is_anonymous:
