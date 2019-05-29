@@ -56,7 +56,7 @@ class WordOfSerie(APIView):
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT key, tfidf from mv_{} order by tfidf DESC".format(self.request.query_params.get('id')))
 
-			for mot in cursor.fetchall()[40:85]:
+			for mot in cursor.fetchall()[1:50]:
 				resultat_json.append({'value':mot[0], 'count':mot[1]})
 
 

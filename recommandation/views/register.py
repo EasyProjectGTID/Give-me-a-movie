@@ -17,7 +17,11 @@ def register(request):
             user.password = form.cleaned_data["password1"]
             user.email = form.cleaned_data["email"]
             user.save()
-            login(request, user)
+            # user = authenticate(username=form.cleaned_data['username'],
+            #              password=form.cleaned_data['password1'],
+            #              )
+            # login(request, user)
+            return redirect('/login')
 
         else:
             messages.add_message(request, messages.INFO, form.errors)
