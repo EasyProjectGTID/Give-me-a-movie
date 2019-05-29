@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 
 from PTUT import STATIC_URL, MEDIA_ROOT
-from recommandation.tasks import write_post
+from recommandation.tasks import file_processing
 from recommandation.utils.getSerieInfo import getInfos
 from .models import Series, KeyWords, Posting, Rating, SearchCount, Similarity
 from admin_auto_filters.filters import AutocompleteFilter
@@ -34,17 +34,14 @@ def export_csv(self, request, queryset):
 
 	return response
 
-
 export_csv.short_description = "Exporter les selections en CSV"
 
 
 def handle_uploaded_file(f):
-	print(f)
-	print(MEDIA_ROOT[0])
 	with open(MEDIA_ROOT[0] + str(f), 'wb+') as destination:
 		for chunk in f.chunks():
 			destination.write(chunk)
-	return MEDIA_ROOT[0] + str(f)
+	return str(f)
 
 
 class SerieForm(forms.ModelForm):
@@ -69,8 +66,11 @@ class SeriesAdmin(admin.ModelAdmin):
 
 	def save_model(self, request, obj, form, change):
 
-		handle_uploaded_file(request.FILES['file'])
-		write_post('toto')
+		filename = handle_uploaded_file(request.FILES['file'])
+
+		file_processing(filename)
+
+		obj.name = request.POST['real_name']
 		super(SeriesAdmin, self).save_model(request, obj, form, change)
 
 	def similaire(self, instance):

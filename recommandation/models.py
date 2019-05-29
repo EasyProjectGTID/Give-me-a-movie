@@ -72,12 +72,11 @@ class KeyWords(models.Model):
 
 class Posting(models.Model):
 	number = models.IntegerField(verbose_name='Nombre de fois que le mot est cité')
-	series = models.ForeignKey(Series, on_delete=models.PROTECT, verbose_name='Serie')
-	keywords = models.ForeignKey(KeyWords, on_delete=models.PROTECT, db_index=True, verbose_name='Mot')
+	series = models.ForeignKey(Series, on_delete=models.CASCADE, verbose_name='Serie')
+	keywords = models.ForeignKey(KeyWords, on_delete=models.CASCADE, db_index=True, verbose_name='Mot')
 	tf = models.FloatField(null=True, verbose_name='Term Frequency')
 
-	def __str__(self):
-		return 'Le mot ' + self.keywords.key + ' cité ' + str(self.number) + ' fois dans ' + self.series.real_name
+
 
 	class Meta:
 		verbose_name = 'Mot cité dans une serie'

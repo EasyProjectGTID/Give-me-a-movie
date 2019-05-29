@@ -24,8 +24,6 @@ def idf(word):
     #print('len de la collection', lenCol)
 
     result = math.log2(lenCol / documentWithTermCount[0][0])
-
-
     return result
 
 
