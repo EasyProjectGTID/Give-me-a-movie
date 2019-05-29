@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
+import sys
 
 from recommandation.tfidf.searchTFIDF2 import search
 from recommandation.models import Series, KeyWords, Posting, Rating
@@ -45,6 +46,8 @@ class recommandView(APIView):
             resultat_json.append(
                 {"pk": serie.pk, "name": serie.real_name, "infos": serie.infos}
             )
+        resultat_json.sort(key=lambda x: x["name"]);
+        #sys.stderr.write(json.dumps(resultat_json[0]));
         return HttpResponse(json.dumps(resultat_json))
 
     def post(self, *args, **kwargs):

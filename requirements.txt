@@ -18,4 +18,5 @@ gunicorn
 black
 gevent
 huey
+pygments
 django-admin-autocomplete-filter

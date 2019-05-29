@@ -37,6 +37,10 @@ def maxNB(corpus):
 def read_srt_files(listSrt):
     corpus = collections.Counter()
 
+    """pour chaque fichier srt d'une série, on sépare chaque mot de ce srt,
+            on les stemme avant de regrouper les similaires et de les compter. ce regroupement est commun pour tous les srts"""
+    # print(episode)
+
 
     for episode in listSrt:
         subs = pysrt.open(episode, encoding='iso-8859-1')
@@ -79,6 +83,9 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 
 def walk_sub(directory):
     """ Parcours du dossier de sous titres retourne un dictionnaire"""
+    """ Parcours du dossier de sous titres retourne un dictionnaire"""
+    """le dictionnaire contient en clés le nom des répertoires contenu dans directory (la variable passsée en en-tête)
+    et en valeurs une liste contenant le chemin vers les srt"""
     seriesPath = dict()
     for root in os.scandir(directory):
 
