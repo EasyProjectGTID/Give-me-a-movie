@@ -22,19 +22,7 @@ class RegisterForm(UserCreationForm):
 			}
 		),
 	)
-	nom = forms.CharField(
-		max_length=250,
-		widget=forms.TextInput(
-			attrs={"class": "form-control", "type": "text", "placeholder": "Nom"}
-		),
-	)
 
-	prenom = forms.CharField(
-		max_length=250,
-		widget=forms.TextInput(
-			attrs={"class": "form-control", "type": "text", "placeholder": "Prenom"}
-		),
-	)
 
 
 	email = forms.EmailField(
