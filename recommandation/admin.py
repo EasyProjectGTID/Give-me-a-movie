@@ -56,7 +56,7 @@ class SerieForm(forms.ModelForm):
 class SeriesAdmin(admin.ModelAdmin):
 	list_display = ('name', 'real_name', 'infos', 'image')
 	actions = [getInfos, export_csv]
-	search_fields = ['serie']
+	search_fields = ['real_name', 'name']
 	exclude = ('infos', 'name', 'max_keyword_nb', 'image_local')
 	readonly_fields = ('image', 'data_prettified', 'number_of_words')
 	form = SerieForm

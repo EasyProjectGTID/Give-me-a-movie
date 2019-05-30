@@ -54,12 +54,12 @@ class recommandView(APIView):
 		:param kwargs:
 		:return: Donne le résultat des recommandations compute dans l'onglet recommandez moi
 		"""
-        print(self.request.data)
+
         resultat = compute(
             like=self.request.data["like"], dislike=self.request.data["dislike"]
         )
         resultat_json = []
-        print(resultat)
+
         for res in resultat[0:3]:
 
             serie = Series.objects.get(id=res[0])

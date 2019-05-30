@@ -1,30 +1,29 @@
 import operator
-import pickle
 import time
-
 import psycopg2
 import numpy
-
 import math
 from collections import Counter
-
-import redis
-
 from PTUT import DATABASES
+import sys
+import os
+from django.conf import settings
 
-r = redis.Redis(host='localhost', port=6379, db=2)
-conn = psycopg2.connect(
-        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
-                                                                DATABASES['default']['USER'],
-                                                                DATABASES['default']['HOST'],
-                                                                DATABASES['default']['PASSWORD']))
+sys.path.append('/home/easyproject/webapp')
+os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
+
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
+                                                                                settings.DATABASES['default']['USER'],
+                                                                                settings.DATABASES['default']['HOST'],
+                                                                                settings.DATABASES['default']['PASSWORD']))
+
 
 def cosine_distance(serie_id, u, v):
 	"""
 	Returns the cosine of the angle between vectors v and u. This is equal to
 	u.v / |u||v|.
 	"""
-	return serie_id, 100*(numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))))
+	return serie_id, 100 * (numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))))
 
 
 def buildVector(seriename, serie1, serie2):
@@ -77,9 +76,12 @@ def construct(serie_pk):
 	print(resultat_trier)
 	# r.set(serie_pk, pickle.dumps(resultat_trier))
 	for res in resultat_trier:
-		cur.execute("INSERT INTO recommandation_similarity (serie_id, similar_to_id, score) VALUES ('{0}', '{1}', '{2}')".format(serie_pk, res[0], res[1]))
+		cur.execute(
+			"INSERT INTO recommandation_similarity (serie_id, similar_to_id, score) VALUES ('{0}', '{1}', '{2}')".format(serie_pk, res[0], res[1]))
 
 	conn.commit()
+
+
 cur = conn.cursor()
 cur.execute(
 	"select s.id from recommandation_series s")

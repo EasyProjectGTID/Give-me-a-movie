@@ -10,9 +10,14 @@ from nltk.corpus import stopwords
 import time
 from nltk.stem import PorterStemmer
 import unidecode
-from PTUT.settings import DATABASES
-import spacy
-from spacy import displacy
+import sys
+from django.conf import settings
+import sys
+import django
+sys.path.append('/home/easyproject/webapp')
+os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
+
+
 
 
 
@@ -94,16 +99,15 @@ def walk_sub(directory):
     return seriesPath
 
 
-conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
-                                                                                DATABASES['default']['USER'],
-                                                                                DATABASES['default']['HOST'],
-                                                                                DATABASES['default']['PASSWORD']))
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
+                                                                                settings.DATABASES['default']['USER'],
+                                                                                settings.DATABASES['default']['HOST'],
+                                                                                settings.DATABASES['default']['PASSWORD']))
 subs = walk_sub('/home/hadrien/Bureau/sous-titres/') # Ne pas oublier le slash a la fin
 
 tot = 0
 totals = time.time()
 for key, value in subs.items():
-
 
 
     start = time.time()

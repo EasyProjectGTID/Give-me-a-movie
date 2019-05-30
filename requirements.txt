@@ -19,3 +19,5 @@ black
 gevent
 huey
 django-admin-autocomplete-filter
+pygments
+unidecode

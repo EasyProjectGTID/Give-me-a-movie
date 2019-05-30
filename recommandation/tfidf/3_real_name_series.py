@@ -1,12 +1,18 @@
 import psycopg2
+import os
+from django.conf import settings
+import sys
 
-from PTUT import DATABASES
 
-conn = psycopg2.connect(
-        "dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
-                                                                DATABASES['default']['USER'],
-                                                                DATABASES['default']['HOST'],
-                                                                DATABASES['default']['PASSWORD']))
+sys.path.append('/home/easyproject/webapp')
+os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
+
+
+
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
+                                                                                settings.DATABASES['default']['USER'],
+                                                                                settings.DATABASES['default']['HOST'],
+                                                                                settings.DATABASES['default']['PASSWORD']))
 
 
 serie = dict()

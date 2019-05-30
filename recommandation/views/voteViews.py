@@ -52,8 +52,8 @@ def mesVotes(request):
 
 
 class MyUserVote(APIView):
-	# permission_classes = (permissions.IsAuthenticated,)
-	# authentication_classes = (TokenAuthentication,)
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (TokenAuthentication,)
 
 	def get(self, *args, **kwargs):
 		"""

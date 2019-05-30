@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render
+from rest_framework import permissions
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 
@@ -36,6 +38,8 @@ class SearchCountApi(APIView):
 
 
 class MostLikedSerie(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (TokenAuthentication,)
 	def get(self, *args, **kwargs):
 		Rating.objects.filter()
 		series = Series.objects.filter().annotate(vote_count=Count('rating')).order_by('-vote_count')[:10]

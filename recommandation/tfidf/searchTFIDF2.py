@@ -1,10 +1,10 @@
 import math
 import operator
 import time
-from pprint import pprint
+
 from PTUT.settings import DATABASES
 import psycopg2
-from nltk.stem.snowball import FrenchStemmer, EnglishStemmer, PorterStemmer, SnowballStemmer
+from nltk.stem.snowball import PorterStemmer
 import redis
 
 redis_for_similar = redis.Redis(host='localhost', port=6379, db=2)
