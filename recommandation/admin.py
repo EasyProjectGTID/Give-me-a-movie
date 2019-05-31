@@ -70,7 +70,7 @@ class SeriesAdmin(admin.ModelAdmin):
 
 			file_processing(filename)
 
-		obj.name = request.POST['real_name']
+		obj.real_name = request.POST['real_name']
 		super(SeriesAdmin, self).save_model(request, obj, form, change)
 
 	def similaire(self, instance):

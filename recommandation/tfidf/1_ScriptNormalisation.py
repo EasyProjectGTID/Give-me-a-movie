@@ -19,8 +19,6 @@ os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
 
 
 
-
-
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 
 def getWords(text):
