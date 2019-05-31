@@ -65,10 +65,10 @@ class SeriesAdmin(admin.ModelAdmin):
 		verbose_name_plural = "Series"
 
 	def save_model(self, request, obj, form, change):
+		if request.FILES:
+			filename = handle_uploaded_file(request.FILES['file'])
 
-		filename = handle_uploaded_file(request.FILES['file'])
-
-		file_processing(filename)
+			file_processing(filename)
 
 		obj.name = request.POST['real_name']
 		super(SeriesAdmin, self).save_model(request, obj, form, change)

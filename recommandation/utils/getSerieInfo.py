@@ -1,5 +1,6 @@
 import requests
-from PTUT.settings import API_KEY
+from PTUT.settings import API_KEY, STATICFILES_DIRS, STATIC_URL
+
 
 def getInfos(modeladmin, request, queryset):
 
@@ -7,6 +8,15 @@ def getInfos(modeladmin, request, queryset):
         URL = 'http://www.omdbapi.com/?apikey=' + API_KEY + '&'
         r = requests.get(URL + 't=' + serie.real_name)
         serie.infos = r.json()
+        serie.save()
+
+
+        response = requests.get(serie.infos['Poster'])
+
+        if response.status_code == 200:
+            with open(STATICFILES_DIRS[0] + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
+                f.write(response.content)
+        serie.image_local = STATIC_URL + 'posters/' + str(serie.name) + '.jpeg'
         serie.save()
 
 
