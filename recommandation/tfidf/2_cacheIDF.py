@@ -1,4 +1,6 @@
 import math
+import time
+
 from django.conf import settings
 import sys
 import django
@@ -42,16 +44,19 @@ def putIDF_cache():
     mots = cur.fetchall()
     i = 0
     for mot in mots:
-        i += 1
+        #i += 1
 
         cur.execute("UPDATE recommandation_keywords set idf = '{}' where recommandation_keywords.id = '{}'".format(idf(mot[1]), mot[0]))
-        if i % 100 == 0:
-            print('{} / {}'.format(i, taille[0][0]))
+        #if i % 100 == 0:
+            #print('{} / {}'.format(i, taille[0][0]))
 
     conn.commit()
 
 lenCol = lenCollection()
+start =time.time()
 putIDF_cache()
+end = time.time()
+print(end - start)
 
 # print(idf('people'))
 

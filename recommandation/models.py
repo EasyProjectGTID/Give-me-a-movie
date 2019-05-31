@@ -21,7 +21,7 @@ class Series(models.Model):
 		return mark_safe('<img src="{}" width="75" />'.format(self.image_local))
 
 	class Meta:
-		verbose_name = 'Une series'
+		verbose_name = 'Une serie'
 		verbose_name_plural = 'Les series'
 
 

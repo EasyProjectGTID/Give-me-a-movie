@@ -49,7 +49,6 @@ class recommandView(APIView):
 
     def post(self, *args, **kwargs):
         """
-
 		:param args:
 		:param kwargs:
 		:return: Donne le résultat des recommandations compute dans l'onglet recommandez moi
