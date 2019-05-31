@@ -36,9 +36,6 @@ def idf(word):
 
 
 def putIDF_cache():
-    cur.execute(
-        "SELECT count(k.id) FROM recommandation_keywords as k")
-    taille = cur.fetchall()
 
     cur.execute(
             "SELECT k.id, k.key FROM recommandation_keywords as k")

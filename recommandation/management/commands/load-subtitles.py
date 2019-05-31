@@ -49,31 +49,6 @@ class Command(BaseCommand):
 			endbdd = time.time()
 			print('INSERT IN BDD:{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
 
-		fin = time.time()
-		print('TOTAL DU TRAITEMENT :', fin - totals)
-		print("Construction du cache IDF")
-		start = time.time()
-		putIDF_cache()
-		fin = time.time()
-		print('Fin de Construction du cache IDF {}'.format(fin - start))
-
-		print("Application des Noms")
-		start = time.time()
-		real_name()
-		fin = time.time()
-		print('Fin de Construction du cache IDF {}'.format(fin - start))
-
-		print("Construction des vue materialisés")
-		start = time.time()
-		construct_views()
-		fin = time.time()
-		print('Fin Construction des vue materialisés {}'.format(fin - start))
-
-		print("Cache similarités")
-		start = time.time()
-		cache_similarity()
-		fin = time.time()
-		print('Fin Cache similarités{}'.format(fin - start))
 
 
 def getWords(text):
