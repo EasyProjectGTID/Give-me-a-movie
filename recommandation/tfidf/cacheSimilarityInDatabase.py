@@ -16,7 +16,7 @@ conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".form
                                                                                 settings.DATABASES['default']['HOST'],
                                                                                 settings.DATABASES['default']['PASSWORD']))
 
-
+cur = conn.cursor()
 def cosine_distance(serie_id, u, v):
 	"""
 	Returns the cosine of the angle between vectors v and u. This is equal to
@@ -72,7 +72,7 @@ def construct(serie_pk):
 		ecd = time.time()
 
 	resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
-	print(resultat_trier)
+	#print(resultat_trier)
 	# r.set(serie_pk, pickle.dumps(resultat_trier))
 	for res in resultat_trier:
 		cur.execute(
@@ -80,16 +80,16 @@ def construct(serie_pk):
 
 	conn.commit()
 
+def cache_similarity():
 
-cur = conn.cursor()
-cur.execute(
-	"select s.id from recommandation_series s")
-series = cur.fetchall()
+	cur.execute(
+		"select s.id from recommandation_series s")
+	series = cur.fetchall()
 
-start = time.time()
-for serie in series:
-	print(serie[0])
-	construct(serie[0])
+	start = time.time()
+	for serie in series:
+		#print(serie[0])
+		construct(serie[0])
 
-end = time.time()
-print('tot', end - start)
+	end = time.time()
+

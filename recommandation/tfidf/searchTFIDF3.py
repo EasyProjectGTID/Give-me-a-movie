@@ -52,8 +52,7 @@ def search(keywords):
     start = time.time()
     dict_res = dict()
     for mot in liste_mots:
-        #mot = stemmer.stem(mot)
-        print(mot)
+        mot = stemmer.stem(mot)
 
         cur.execute(
             "SELECT s.id FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE  p.series_id=s.id AND p.keywords_id=k.id AND k.key = '{}'".format(mot))

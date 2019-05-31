@@ -15,5 +15,3 @@ def download():
 				f.write(response.content)
 		serie.image_local = STATIC_URL  + 'posters/' + str(serie.name) + '.jpeg'
 		serie.save()
-
-download()

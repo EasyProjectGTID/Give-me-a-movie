@@ -1,13 +1,7 @@
+from django.core.management import BaseCommand
 import math
 import time
-
 from django.conf import settings
-import sys
-import django
-import os
-sys.path.append('/home/easyproject/webapp')
-os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
-
 import psycopg2
 
 conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
@@ -15,6 +9,13 @@ conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".form
                                                                                 settings.DATABASES['default']['HOST'],
                                                                                 settings.DATABASES['default']['PASSWORD']))
 cur = conn.cursor()
+
+
+class Command(BaseCommand):
+	help = 'Cache IDF'
+
+	def handle(self, *args, **options):
+		putIDF_cache()
 
 def lenCollection():
     cur.execute(
@@ -53,11 +54,3 @@ def putIDF_cache():
     conn.commit()
 
 lenCol = lenCollection()
-start =time.time()
-putIDF_cache()
-end = time.time()
-print(end - start)
-
-# print(idf('people'))
-
-
