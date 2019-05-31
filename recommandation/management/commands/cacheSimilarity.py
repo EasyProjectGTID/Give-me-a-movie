@@ -7,6 +7,8 @@ import numpy
 import psycopg2
 from django.core.management import BaseCommand
 
+from PTUT import settings
+
 conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
 																						   settings.DATABASES['default']['USER'],
 																						   settings.DATABASES['default']['HOST'],
@@ -28,7 +30,7 @@ class Command(BaseCommand):
 
 		end = time.time()
 
-		
+
 
 
 def cosine_distance(serie_id, u, v):
