@@ -4,10 +4,9 @@ import psycopg2
 import numpy
 import math
 from collections import Counter
-from PTUT import DATABASES
 import sys
 import os
-from django.conf import settings 
+from django.conf import settings
 
 sys.path.append('/home/easyproject/webapp')
 os.environ["DJANGO_SETTINGS_MODULE"] = 'PTUT.settings'
