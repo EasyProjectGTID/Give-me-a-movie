@@ -1,4 +1,6 @@
 import requests
+from django.conf.global_settings import STATIC_ROOT
+
 from PTUT.settings import API_KEY, STATICFILES_DIRS, STATIC_URL
 
 
@@ -14,7 +16,7 @@ def getInfos(modeladmin, request, queryset):
         response = requests.get(serie.infos['Poster'])
 
         if response.status_code == 200:
-            with open(STATICFILES_DIRS[0] + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
+            with open(STATIC_ROOT + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
                 f.write(response.content)
         serie.image_local = STATIC_URL + 'posters/' + str(serie.name) + '.jpeg'
         serie.save()
