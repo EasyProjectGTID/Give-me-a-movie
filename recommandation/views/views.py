@@ -8,6 +8,7 @@ from _operator import itemgetter
 from django.contrib.auth.models import User, AnonymousUser
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.views.decorators.cache import cache_control
 from rest_framework.authtoken.models import Token
 
 from recommandation.tfidf.searchTFIDF2 import search
@@ -32,6 +33,7 @@ def export_csv(request):
 
     return response
 
+@cache_control(max_age=3600)
 def index(request):
     if request.user.is_anonymous:
         return render(request, 'index.html', {'base_url':REACT_URL})

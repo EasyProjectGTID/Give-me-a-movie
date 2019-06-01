@@ -2,27 +2,26 @@ import math
 import zipfile
 import collections
 import fnmatch
-import operator
 import os
 import nltk
 import psycopg2
 import pysrt
 import re
-
 import requests
 from nltk.corpus import stopwords
-import time
 from nltk.stem import PorterStemmer
 import unidecode
 from PTUT.settings import DATABASES, API_KEY, STATIC_URL, STATICFILES_DIRS
-import huey
-
 from PTUT import HUEY, MEDIA_ROOT
+from django.core import management
 from recommandation.models import Series
 
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
 
-
+conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
+																				   DATABASES['default']['USER'],
+																				   DATABASES['default']['HOST'],
+																				   DATABASES['default']['PASSWORD']))
 @HUEY.task()
 def file_processing(filename):
 	cur = conn.cursor()
@@ -31,15 +30,20 @@ def file_processing(filename):
 	zip_obj.close()
 	subs = walk_sub(MEDIA_ROOT[0])
 
+	serie_id = None
 	for key, value in subs.items():
+
 		text = read_srt_files(value)
 		serie_id = insertInDatabase(key, text['corpus'], text['lenCorpus'])
 
+	print("Téléchargement des infos et des images")
 	new_serie = Series.objects.get(id=serie_id)
 	URL = 'http://www.omdbapi.com/?apikey=' + API_KEY + '&'
 	r = requests.get(URL + 't=' + new_serie.real_name)
+	new_serie.name = os.path.splitext(os.path.basename(filename))[0]
 	new_serie.infos = r.json()
 	new_serie.save()
+
 
 	response = requests.get(new_serie.infos['Poster'])
 
@@ -48,8 +52,10 @@ def file_processing(filename):
 			f.write(response.content)
 	new_serie.image_local = STATIC_URL + 'posters/' + str(new_serie.name) + '.jpeg'
 	new_serie.save()
+	print("Fin Téléchargement des infos et des images")
 
-	putIDF_cache()
+	management.call_command('cacheIDF')
+	print("Creation de la Materialize View")
 	cur.execute(
 		"CREATE MATERIALIZED VIEW IF NOT EXISTS  mv_{} "
 		"AS select k.key, (p.tf*k.idf) as tfidf from recommandation_keywords k, recommandation_posting p, recommandation_series s "
@@ -57,7 +63,7 @@ def file_processing(filename):
 		"AND s.id = p.series_id "
 		"AND s.id='{}'".format(str(serie_id), str(serie_id)))
 	conn.commit()
-
+	management.call_command('refreshMatViews')
 
 def getWords(text):
 	return re.findall('\w+', text)
@@ -81,7 +87,6 @@ def maxNB(corpus):
 
 def read_srt_files(listSrt):
 	corpus = collections.Counter()
-
 	for episode in listSrt:
 		subs = pysrt.open(episode, encoding='iso-8859-1')
 
@@ -96,7 +101,6 @@ def read_srt_files(listSrt):
 		corpus.update(words)
 
 	maxi = maxNB(corpus)
-
 	corpusWithTf = calculTf(corpus, maxi)
 
 	return {'corpus': corpusWithTf, 'lenCorpus': maxi}
@@ -142,16 +146,8 @@ def walk_sub(directory):
 	return seriesPath
 
 
-conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(DATABASES['default']['NAME'],
-																				   DATABASES['default']['USER'],
-																				   DATABASES['default']['HOST'],
-																				   DATABASES['default']['PASSWORD']))
-
-
 def lenCollection():
 	cur = conn.cursor()
-
-
 	cur.execute(
 		"SELECT count(*) FROM recommandation_series as s")
 	lenCollection = cur.fetchall()
@@ -160,8 +156,6 @@ def lenCollection():
 
 def idf(word):
 	cur = conn.cursor()
-
-
 	cur.execute(
 		"SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(
 			word))
@@ -172,19 +166,4 @@ def idf(word):
 	return result
 
 
-def putIDF_cache():
-	cur = conn.cursor()
-	cur.execute(
-		"SELECT count(k.id) FROM recommandation_keywords as k")
-	taille = cur.fetchall()
 
-	cur.execute(
-		"SELECT k.id, k.key FROM recommandation_keywords as k")
-	mots = cur.fetchall()
-
-	for mot in mots:
-		cur.execute("UPDATE recommandation_keywords set idf = '{}' where recommandation_keywords.id = '{}'".format(idf(mot[1]), mot[0]))
-
-
-
-	conn.commit()

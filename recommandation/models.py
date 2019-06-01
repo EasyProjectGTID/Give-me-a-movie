@@ -84,8 +84,8 @@ class Posting(models.Model):
 
 
 class Similarity(models.Model):
-	serie = models.ForeignKey(Series, null=True, on_delete=models.PROTECT, related_name='serie')
-	similar_to = models.ForeignKey(Series, null=True, on_delete=models.PROTECT, related_name='similar_to')
+	serie = models.ForeignKey(Series, null=True, on_delete=models.CASCADE, related_name='serie')
+	similar_to = models.ForeignKey(Series, null=True, on_delete=models.CASCADE, related_name='similar_to')
 	score = models.FloatField(null=True)
 
 	class Meta:

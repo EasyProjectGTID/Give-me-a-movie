@@ -21,3 +21,4 @@ huey
 django-admin-autocomplete-filter
 pygments
 unidecode
+django-redis

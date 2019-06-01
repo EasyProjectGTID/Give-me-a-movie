@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 
 from django.db.models import Sum, Count
 from django.urls import resolve
@@ -67,11 +68,14 @@ class SeriesAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		if request.FILES:
 			filename = handle_uploaded_file(request.FILES['file'])
-
+			obj.name = os.path.splitext(os.path.basename(filename))[0]
+			obj.real_name = request.POST['real_name']
+			super(SeriesAdmin, self).save_model(request, obj, form, change)
 			file_processing(filename)
 
-		obj.real_name = request.POST['real_name']
-		super(SeriesAdmin, self).save_model(request, obj, form, change)
+
+
+
 
 	def similaire(self, instance):
 		return Similarity.objects.filter(serie=instance).order_by('-score')[0:10]

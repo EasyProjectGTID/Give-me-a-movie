@@ -130,7 +130,7 @@ WSGI_APPLICATION = 'PTUT.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_test',
+        'NAME': 'django123',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -182,7 +182,7 @@ MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'recommandation/media/'),
 )
 
-STATIC_URL = '/recommandation/static/'
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'recommandation/static/'),
 )
@@ -204,3 +204,9 @@ CACHES = {
 if DEBUG is True:
     INSTALLED_APPS.append('debug_toolbar', )
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware', )
+
+try:
+    from .prod import *  # NOQA
+except:
+    pass
+
