@@ -57,7 +57,6 @@ def maxNB(corpus):
 def read_srt_files(listSrt):
 	corpus = collections.Counter()
 
-	print(listSrt)
 	for episode in listSrt:
 		subs = pysrt.open(episode, encoding='iso-8859-1')
 
@@ -120,6 +119,7 @@ def walk_sub(directory):
 
 def processing(i):
 	key, value = i
+	print(key)
 	start = time.time()
 	text = read_srt_files(value)
 	end = time.time()
