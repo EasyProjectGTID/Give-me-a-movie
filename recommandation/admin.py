@@ -61,7 +61,7 @@ class SerieForm(forms.ModelForm):
 
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
-	list_display = ('real_name', 'infos', 'image', 'max_keyword_nb', 'number_of_words')
+	list_display = ('real_name', 'infos', 'image', 'max_keyword_nb')
 	actions = [getInformations, export_csv]
 	search_fields = ['real_name', 'name']
 	exclude = ('infos', 'name', 'max_keyword_nb', 'image_local')
@@ -92,8 +92,7 @@ class SeriesAdmin(admin.ModelAdmin):
 		style = "<style>" + formatter.get_style_defs() + "</style><br>"
 		return mark_safe(style + response)
 
-	def number_of_words(self, instance):
-		return Posting.objects.filter(series=instance).count()
+
 
 	data_prettified.short_description = 'Informations complémentaires'
 	number_of_words.short_description = 'Nombre de mots de la serie'
