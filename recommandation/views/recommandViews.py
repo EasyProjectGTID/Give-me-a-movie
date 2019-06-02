@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 
 from recommandation.tfidf.searchTFIDF2 import search
@@ -18,7 +19,7 @@ from PTUT.settings import REACT_URL
 from recommandation.views import afficheVoteFn
 
 
-@login_required()
+@login_required(login_url='/login')
 def recommandTemplate(request):
     user = User.objects.get(pk=request.user.pk)
     token, created = Token.objects.get_or_create(user=user)
@@ -31,6 +32,7 @@ class recommandView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    @method_decorator(login_required(login_url='/login'))
     def get(self, *args, **kwargs):
         """
 
@@ -47,6 +49,7 @@ class recommandView(APIView):
             )
         return HttpResponse(json.dumps(resultat_json))
 
+    @method_decorator(login_required(login_url='/login'))
     def post(self, *args, **kwargs):
         """
 		:param args:

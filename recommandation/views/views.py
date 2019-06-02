@@ -33,7 +33,6 @@ def export_csv(request):
 
     return response
 
-@cache_control(max_age=3600)
 def index(request):
     if request.user.is_anonymous:
         return render(request, 'index.html', {'base_url':REACT_URL})

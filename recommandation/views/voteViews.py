@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 
 from PTUT.settings import REACT_URL, POSTER_URL
@@ -44,7 +45,7 @@ class vote(APIView):
 		return HttpResponse('ok')
 
 
-@login_required()
+@login_required(login_url='/login')
 def mesVotes(request):
 	user = User.objects.get(pk=request.user.pk)
 	token, created = Token.objects.get_or_create(user=user)
@@ -85,6 +86,7 @@ class MyUserVote(APIView):
 
 
 class mesVotesCompute(APIView):
+
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (TokenAuthentication,)
 

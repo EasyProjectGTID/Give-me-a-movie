@@ -3,6 +3,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -10,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from recommandation.forms.PasswordChangeCustomForm import PasswordChangeCustomForm
 from recommandation.forms.profileForm import ProfilForm
 
-@login_required()
+@login_required(login_url='/login')
 def profile(request):
     user = User.objects.get(id=request.user.id)
     if request.method == 'POST':
@@ -32,12 +33,15 @@ class ChangePassword(TemplateView):
     """
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    @method_decorator(login_required(login_url='/login'))
     def get(self, *args, **kwargs):
         passwordForm = PasswordChangeCustomForm(self.request.user)
 
         context = {'form': passwordForm}
         return render(self.request, 'changePassword.html', context)
 
+    @method_decorator(login_required(login_url='/login'))
     def post(self, request):
         passwordForm = PasswordChangeCustomForm(request.user, request.POST)
         if passwordForm.is_valid():
