@@ -92,7 +92,8 @@ class SeriesAdmin(admin.ModelAdmin):
 		style = "<style>" + formatter.get_style_defs() + "</style><br>"
 		return mark_safe(style + response)
 
-
+	def number_of_words(self, instance):
+		return Posting.objects.filter(series=instance).count()
 
 	data_prettified.short_description = 'Informations complémentaires'
 	number_of_words.short_description = 'Nombre de mots de la serie'
