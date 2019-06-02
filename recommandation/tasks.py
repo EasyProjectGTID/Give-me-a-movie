@@ -22,6 +22,8 @@ conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".form
 																				   DATABASES['default']['USER'],
 																				   DATABASES['default']['HOST'],
 																				   DATABASES['default']['PASSWORD']))
+
+
 @HUEY.task()
 def file_processing(filename):
 	cur = conn.cursor()
@@ -32,7 +34,6 @@ def file_processing(filename):
 
 	serie_id = None
 	for key, value in subs.items():
-
 		text = read_srt_files(value)
 		serie_id = insertInDatabase(key, text['corpus'], text['lenCorpus'])
 
@@ -43,7 +44,6 @@ def file_processing(filename):
 	new_serie.name = os.path.splitext(os.path.basename(filename))[0]
 	new_serie.infos = r.json()
 	new_serie.save()
-
 
 	response = requests.get(new_serie.infos['Poster'])
 
@@ -64,6 +64,7 @@ def file_processing(filename):
 		"AND s.id='{}'".format(str(serie_id), str(serie_id)))
 	conn.commit()
 	management.call_command('refreshMatViews')
+
 
 def getWords(text):
 	return re.findall('\w+', text)
@@ -125,7 +126,6 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 				value[0], key_id, serie_id, value[1]))
 	conn.commit()
 
-
 	return serie_id
 
 
@@ -164,6 +164,27 @@ def idf(word):
 
 	result = math.log2(lenCollection() / documentWithTermCount[0][0])
 	return result
+
+
+@HUEY.task()
+def getInfos(queryset):
+	for serie in queryset:
+		URL = 'http://www.omdbapi.com/?apikey=' + API_KEY + '&'
+		r = requests.get(URL + 't=' + serie.real_name)
+		serie.infos = r.json()
+		serie.save()
+
+		try:
+			response = requests.get(serie.infos['Poster'])
+		except:
+			pass
+
+		if response.status_code == 200:
+			with open(STATICFILES_DIRS[0] + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
+				f.write(response.content)
+		serie.image_local = STATIC_URL + 'posters/' + str(serie.name) + '.jpeg'
+		serie.save()
+
 
 
 

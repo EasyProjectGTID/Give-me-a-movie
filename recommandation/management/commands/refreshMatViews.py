@@ -20,5 +20,5 @@ class Command(BaseCommand):
 
 		for other in others:
 			cur.execute(
-				"REFRESH MATERIALIZED VIEW CONCURRENTLY mv_{};".format(str(other[0]), other[0]))
+				"REFRESH MATERIALIZED VIEW mv_{};".format(str(other[0]), other[0]))
 			conn.commit()

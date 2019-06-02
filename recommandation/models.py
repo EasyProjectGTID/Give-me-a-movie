@@ -59,7 +59,7 @@ class Rating(models.Model):
 
 class KeyWords(models.Model):
 	key = models.CharField(max_length=200, unique=True, db_index=True, verbose_name='Mot')
-	series = models.ManyToManyField(Series, through='Posting', verbose_name='Serie')
+	#series = models.ManyToManyField(Series, through='Posting', verbose_name='Serie')
 	idf = models.FloatField(null=True, verbose_name='Inverse document Frequency')
 
 	def __str__(self):
@@ -76,8 +76,6 @@ class Posting(models.Model):
 	keywords = models.ForeignKey(KeyWords, on_delete=models.CASCADE, db_index=True, verbose_name='Mot')
 	tf = models.FloatField(null=True, verbose_name='Term Frequency')
 
-
-
 	class Meta:
 		verbose_name = 'Mot cité dans une serie'
 		verbose_name_plural = 'Corpus des series'
@@ -91,3 +89,5 @@ class Similarity(models.Model):
 	class Meta:
 		verbose_name = 'Similaire'
 		verbose_name_plural = 'Similarités'
+
+

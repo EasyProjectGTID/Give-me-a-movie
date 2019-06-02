@@ -15,10 +15,15 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 
 from PTUT import STATIC_URL, MEDIA_ROOT
+from recommandation.tasks import getInfos
 from recommandation.tasks import file_processing
-from recommandation.utils.getSerieInfo import getInfos
 from .models import Series, KeyWords, Posting, Rating, SearchCount, Similarity
 from admin_auto_filters.filters import AutocompleteFilter
+
+def getInformations(model, request, queryset):
+	getInfos(queryset)
+getInformations.short_description = "Télécharger les informations complémentaires pour les series selectionnées"
+
 
 
 def export_csv(self, request, queryset):
@@ -34,6 +39,7 @@ def export_csv(self, request, queryset):
 		row = writer.writerow([getattr(obj, field) for field in field_names])
 
 	return response
+
 
 export_csv.short_description = "Exporter les selections en CSV"
 
@@ -55,8 +61,8 @@ class SerieForm(forms.ModelForm):
 
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
-	list_display = ('name', 'real_name', 'infos', 'image')
-	actions = [getInfos, export_csv]
+	list_display = ('real_name', 'infos', 'image', 'max_keyword_nb', 'number_of_words')
+	actions = [getInformations, export_csv]
 	search_fields = ['real_name', 'name']
 	exclude = ('infos', 'name', 'max_keyword_nb', 'image_local')
 	readonly_fields = ('image', 'data_prettified', 'number_of_words')
@@ -72,10 +78,8 @@ class SeriesAdmin(admin.ModelAdmin):
 			obj.real_name = request.POST['real_name']
 			super(SeriesAdmin, self).save_model(request, obj, form, change)
 			file_processing(filename)
-
-
-
-
+		obj.real_name = request.POST['real_name']
+		super(SeriesAdmin, self).save_model(request, obj, form, change)
 
 	def similaire(self, instance):
 		return Similarity.objects.filter(serie=instance).order_by('-score')[0:10]
@@ -92,7 +96,7 @@ class SeriesAdmin(admin.ModelAdmin):
 		return Posting.objects.filter(series=instance).count()
 
 	data_prettified.short_description = 'Informations complémentaires'
-	number_of_words.short_description = 'Nombre de mots dans la serie'
+	number_of_words.short_description = 'Nombre de mots de la serie'
 
 
 @admin.register(SearchCount)
@@ -105,7 +109,9 @@ class SearchCountAdmin(admin.ModelAdmin):
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
 	actions = [export_csv]
+	list_display = ('serie', 'rating', 'user', 'date_vote')
 	autocomplete_fields = ['user']
+	list_filter = ('rating','serie', 'user')
 
 
 @admin.register(KeyWords)
@@ -116,28 +122,35 @@ class KeyWordsAdmin(admin.ModelAdmin):
 	actions = [export_csv]
 
 
+class SeriesFilter(AutocompleteFilter):
+	title = 'Serie'  # display title
+	field_name = 'series'  # name of the foreign key field
+
 @admin.register(Posting)
 class PostingAdmin(admin.ModelAdmin):
 	list_display = ('keywords', 'number', 'tf', 'series')
 
 	search_fields = ['keywords__key']
-	autocomplete_fields = ['keywords']
-	list_filter = ('series',)
+	autocomplete_fields = ['series']
+	list_filter = [SeriesFilter]
 
 	actions = [export_csv]
+	class Media:
+		pass
 
 
-class ArtistFilter(AutocompleteFilter):
-    title = 'Serie' # display title
-    field_name = 'serie' # name of the foreign key field
+class SerieFilter(AutocompleteFilter):
+	title = 'Serie'  # display title
+	field_name = 'serie'  # name of the foreign key field
+
 
 @admin.register(Similarity)
 class SimilarityAdmin(admin.ModelAdmin):
 	search_fields = ['serie']
 	list_display = ('serie', 'similar_to', 'score')
 	autocomplete_fields = ['serie']
-	#list_filter = ('serie',)
-	list_filter = [ArtistFilter]
+	# list_filter = ('serie',)
+	list_filter = [SerieFilter]
+
 	class Media:
 		pass
-

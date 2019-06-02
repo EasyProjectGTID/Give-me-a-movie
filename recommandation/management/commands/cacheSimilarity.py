@@ -22,16 +22,9 @@ class Command(BaseCommand):
 		cur.execute(
 			"select s.id from recommandation_series s")
 		series = cur.fetchall()
-
-		start = time.time()
 		for serie in series:
 			# print(serie[0])
 			construct(serie[0])
-
-		end = time.time()
-
-
-
 
 def cosine_distance(serie_id, u, v):
 	"""
@@ -76,18 +69,11 @@ def construct(serie_pk):
 
 		cur.execute("select * from mv_{}".format(other[0]))
 		other_words = cur.fetchall()
-
-		sbv = time.time()
 		seriename, v1, v2 = buildVector(serieid, serie_comparer, other_words)
-		ebv = time.time()
-
-		scd = time.time()
 		resultat.append(cosine_distance(serieid, v1, v2))
-		ecd = time.time()
 
 	resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
-	# print(resultat_trier)
-	# r.set(serie_pk, pickle.dumps(resultat_trier))
+
 	for res in resultat_trier:
 		cur.execute(
 			"INSERT INTO recommandation_similarity (serie_id, similar_to_id, score) VALUES ('{0}', '{1}', '{2}')".format(serie_pk, res[0],

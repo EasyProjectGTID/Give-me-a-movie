@@ -63,7 +63,7 @@ def buildVector(seriename, serie1, serie2):
 start = time.time()
 cur = conn.cursor()
 cur.execute(
-    "select s.id from recommandation_series s where s.name='bones'")
+    "select s.id from recommandation_series s where s.name='Arrow2'")
 serie_id = cur.fetchall()[0][0]
 
 cur.execute(

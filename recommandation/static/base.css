@@ -5,6 +5,10 @@ body{
     background: radial-gradient(circle, rgba(11,133,161,1) 0%, rgba(34,0,57,1) 100%)
 }
 
+*{
+  font-family: 'Baloo Bhai';
+}
+
 p{
     color:white;
 }

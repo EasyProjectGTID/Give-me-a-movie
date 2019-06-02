@@ -1,53 +1,46 @@
-from django.core.management.base import BaseCommand
 import collections
 import fnmatch
+import operator
 import os
 import nltk
 import psycopg2
 import pysrt
 import re
+
+from django.core.management import BaseCommand
 from nltk.corpus import stopwords
 import time
 from nltk.stem import PorterStemmer
 import unidecode
+import sys
 from django.conf import settings
+import sys
+import django
 
-conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
-																						   settings.DATABASES['default']['USER'],
-																						   settings.DATABASES['default']['HOST'],
-																						   settings.DATABASES['default']['PASSWORD']))
 cachedStopWords = stopwords.words("french") + stopwords.words("english")
+
+
 class Command(BaseCommand):
 	help = 'Charge et traite les soustitres en BDD'
 
 	def add_arguments(self, parser):
 		parser.add_argument('path', nargs='+', type=str)
-
+		parser.add_argument('number_of_core', nargs='+', type=int)
 	def handle(self, *args, **options):
-
 		subs = walk_sub(options['path'][0])  # Ne pas oublier le slash a la fin
-
-		tot = 0
 		totals = time.time()
-		for key, value in subs.items():
-			start = time.time()
-			text = read_srt_files(value)
-			end = time.time()
-
-			startbdd = time.time()
-
-			insertInDatabase(key, text['corpus'], text['lenCorpus'])
-			tot += 1
-			endbdd = time.time()
-			print('INSERT IN BDD:{0} READ SRT :{1} --- {2} / {3}'.format(endbdd - startbdd, end - start, tot, len(subs.items())))
-
+		import multiprocessing
+		pool = multiprocessing.Pool(options['number_of_core'][0])
+		pool.map(processing, subs.items())
 
 
 def getWords(text):
 	return re.findall('\w+', text)
 
+
 def getKey(item):
 	return item[1]
+
 
 def calculTf(corpus, maxi):
 	resultat = dict()
@@ -56,12 +49,15 @@ def calculTf(corpus, maxi):
 	# print(sorted(resultat.items(), key=operator.itemgetter(1), reverse=True))
 	return resultat
 
+
 def maxNB(corpus):
 	return corpus[max(corpus, key=corpus.get)]
+
 
 def read_srt_files(listSrt):
 	corpus = collections.Counter()
 
+	print(listSrt)
 	for episode in listSrt:
 		subs = pysrt.open(episode, encoding='iso-8859-1')
 
@@ -69,9 +65,9 @@ def read_srt_files(listSrt):
 
 		tokens = nltk.word_tokenize(subs.text)
 
-		words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if
-				 w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
-		# words = [w.lower() for w in tokens if w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
+		#words = [stemmer.stem(unidecode.unidecode(w.lower())) for w in tokens if
+				 #w.lower() not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
+		words = [w.lower() for w in tokens if unidecode.unidecode(w.lower()) not in cachedStopWords and len(w) > 2 and w.lower().isalpha()]
 
 		corpus.update(words)
 
@@ -81,8 +77,12 @@ def read_srt_files(listSrt):
 
 	return {'corpus': corpusWithTf, 'lenCorpus': maxi}
 
-def insertInDatabase(serieName, corpus, lenCorpus):
 
+def insertInDatabase(serieName, corpus, lenCorpus):
+	conn = psycopg2.connect("dbname='{0}' user='{1}' host='{2}' password='{3}'".format(settings.DATABASES['default']['NAME'],
+																					   settings.DATABASES['default']['USER'],
+																					   settings.DATABASES['default']['HOST'],
+																					   settings.DATABASES['default']['PASSWORD']))
 	cur = conn.cursor()
 	cur.execute("INSERT INTO recommandation_series (name, max_keyword_nb) VALUES ('{0}', '{1}') returning id".format(serieName, lenCorpus))
 	conn.commit()
@@ -98,7 +98,8 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 		cur.execute(
 			"INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
 				value[0], key_id, serie_id, value[1]))
-	conn.commit()
+		conn.commit()
+
 
 def walk_sub(directory):
 	""" Parcours du dossier de sous titres retourne un dictionnaire"""
@@ -117,4 +118,11 @@ def walk_sub(directory):
 	return seriesPath
 
 
-
+def processing(i):
+	key, value = i
+	start = time.time()
+	text = read_srt_files(value)
+	end = time.time()
+	startbdd = time.time()
+	insertInDatabase(key, text['corpus'], text['lenCorpus'])
+	endbdd = time.time()
