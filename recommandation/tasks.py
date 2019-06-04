@@ -108,6 +108,7 @@ def read_srt_files(listSrt):
 
 
 def insertInDatabase(serieName, corpus, lenCorpus):
+	print(serieName)
 	cur = conn.cursor()
 	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE name ='{}'".format(lenCorpus, serieName))
 	conn.commit()
