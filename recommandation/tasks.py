@@ -32,7 +32,7 @@ def file_processing(filename):
 	zip_obj.close()
 	subs = walk_sub(MEDIA_ROOT[0])
 
-	serie_id = None
+
 	for key, value in subs.items():
 		text = read_srt_files(value)
 		serie_id = insertInDatabase(key, text['corpus'], text['lenCorpus'])
@@ -109,9 +109,9 @@ def read_srt_files(listSrt):
 
 def insertInDatabase(serieName, corpus, lenCorpus):
 	cur = conn.cursor()
-	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE name ='{}'".format(lenCorpus, serieName))
+	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE real_name ='{}'".format(lenCorpus, serieName))
 	conn.commit()
-	cur.execute("SELECT * from recommandation_series where name = '{}'".format(serieName))
+	cur.execute("SELECT id from recommandation_series where name = '{}'".format(serieName))
 	serie_id = cur.fetchone()[0]
 
 	for word, value in corpus.items():
