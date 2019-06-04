@@ -25,7 +25,7 @@ def lenCollection():
 	return lenCollection[0][0]
 
 
-def idf(word):
+def idf(word, lenCol):
 	cur.execute(
 		"SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(
 			word))
@@ -35,14 +35,13 @@ def idf(word):
 
 
 def putIDF_cache():
+	lenCol = lenCollection()
 	cur.execute(
 		"SELECT k.id, k.key FROM recommandation_keywords as k")
 	mots = cur.fetchall()
 	for mot in mots:
-		cur.execute("UPDATE recommandation_keywords set idf = '{}' where recommandation_keywords.id = '{}'".format(idf(mot[1]), mot[0]))
+		cur.execute("UPDATE recommandation_keywords set idf = '{}' where recommandation_keywords.id = '{}'".format(idf(mot[1], lenCol), mot[0]))
 
 
 	conn.commit()
 
-
-lenCol = lenCollection()
