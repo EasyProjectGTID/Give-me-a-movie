@@ -112,7 +112,7 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 	cur = conn.cursor()
 	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE name ='{}'".format(lenCorpus, serieName))
 	conn.commit()
-	cur.execute("SELECT id from recommandation_series where real_name = '{}'".format(serieName))
+	cur.execute("SELECT id from recommandation_series where name = '{}'".format(serieName))
 	serie_id = cur.fetchone()[0]
 
 	for word, value in corpus.items():
