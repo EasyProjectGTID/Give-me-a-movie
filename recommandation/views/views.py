@@ -4,20 +4,13 @@ import json
 import pickle
 import time
 from _operator import itemgetter
-
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from django.views.decorators.cache import cache_control
 from rest_framework.authtoken.models import Token
-
 from recommandation.tfidf.searchTFIDF2 import search
 from recommandation.models import Series, KeyWords, Posting, Rating, Similarity
-from django.core.cache import cache
-import redis
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
-from rest_framework import permissions
 from PTUT.settings import REACT_URL, POSTER_URL
 from recommandation.views.utils import afficheVoteFn, recherche_history
 
