@@ -53,7 +53,7 @@ def file_processing(filename):
 	new_serie.image_local = STATIC_URL + 'posters/' + str(new_serie.name) + '.jpeg'
 	new_serie.save()
 	print("Fin Téléchargement des infos et des images")
-
+	print('Re construction du cache IDF')
 	management.call_command('cacheIDF')
 	print("Creation de la Materialize View")
 	cur.execute(
@@ -63,6 +63,7 @@ def file_processing(filename):
 		"AND s.id = p.series_id "
 		"AND s.id='{}'".format(str(serie_id), str(serie_id)))
 	conn.commit()
+	print('Refresh des Materializes Views')
 	management.call_command('refreshMatViews')
 
 
