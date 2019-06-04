@@ -109,7 +109,7 @@ def read_srt_files(listSrt):
 
 def insertInDatabase(serieName, corpus, lenCorpus):
 	cur = conn.cursor()
-	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE real_name ='{}'".format(lenCorpus, serieName))
+	cur.execute("UPDATE recommandation_series  SET max_keyword_nb='{}' WHERE name ='{}'".format(lenCorpus, serieName))
 	conn.commit()
 	cur.execute("SELECT id from recommandation_series where name = '{}'".format(serieName))
 	serie_id = cur.fetchone()[0]
