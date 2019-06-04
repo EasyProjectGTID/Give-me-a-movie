@@ -147,14 +147,7 @@ serie['dirt'] = 'Dirt'
 
 for s in serie.items():
 
-
     cur = conn.cursor()
     cur.execute("UPDATE recommandation_series s SET real_name = '{}' WHERE name = '{}'".format(s[1], s[0]))
-
-
-
-
-
-
 
 conn.commit()
