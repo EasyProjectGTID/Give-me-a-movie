@@ -3,9 +3,7 @@ from recommandation.views import index, user_login, logout_user, passwordRecover
 from recommandation.views import register
 from django.contrib import admin as ad
 from recommandation.views.cloudWordsViews import SearchCountApi, populaireTemplate, MostLikedSerie, WordOfSerie
-from recommandation.views.uploadView import uploadTemplate, upload_api
 from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
-
 from recommandation.views.monCompteViews import profile, ChangePassword
 from recommandation.views.voteViews import vote, mesVotes, mesVotesCompute, MyUserVote
 from recommandation.views.recommandViews import recommandTemplate, recommandView
@@ -35,8 +33,6 @@ urlpatterns = [
     path('mostliked', MostLikedSerie.as_view(), name='mostliked'),
     path('wordof', WordOfSerie.as_view(), name='wordof'),
 
-    path('upload', uploadTemplate, name='upload'),
-    path('upload-file', upload_api, name='upload-file'),
     #Gestion du login
     path('login', user_login, name='login'),
     path('logout', logout_user, name='logout'),
