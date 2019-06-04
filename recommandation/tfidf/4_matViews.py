@@ -19,7 +19,8 @@ for other in others:
     i += 1
     cur.execute(
         "CREATE MATERIALIZED VIEW IF NOT EXISTS  mv_{} "
-        "AS select k.key, (p.tf*k.idf) as tfidf from recommandation_keywords k, recommandation_posting p, recommandation_series s "
+        "AS select k.key, (p.tf*k.idf) as tfidf from recommandation_keywords k,"
+        "recommandation_posting p, recommandation_series s "
         "where k.id = p.keywords_id "
         "AND s.id = p.series_id "
         "AND s.id='{}'".format(str(other[0]),other[0]))
