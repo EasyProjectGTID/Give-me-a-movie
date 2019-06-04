@@ -5,7 +5,7 @@ from django.contrib import admin as ad
 from recommandation.views.cloudWordsViews import SearchCountApi, populaireTemplate, MostLikedSerie, WordOfSerie
 from recommandation.views.uploadView import uploadTemplate, upload_api
 from recommandation.views.views import rechercheView, similarItemsView, lastRecentView
-from recommandation.views.adminViews import admin, allSerieView
+
 from recommandation.views.monCompteViews import profile, ChangePassword
 from recommandation.views.voteViews import vote, mesVotes, mesVotesCompute, MyUserVote
 from recommandation.views.recommandViews import recommandTemplate, recommandView
@@ -48,8 +48,7 @@ urlpatterns = [
 
 
     #Gestion admin
-    path('administrateur', admin, name='administrateur'),
-    path('all_series_admin', allSerieView.as_view(), name='all_series_admin')
+
 
 
 

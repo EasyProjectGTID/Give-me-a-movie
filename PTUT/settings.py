@@ -36,10 +36,10 @@ HUEY = RedisHuey('recommandation', connection_pool=pool)
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SECURE_SSL_REDIRECT = True
 
-REACT_URL = 'http://127.0.0.1:8000/'
+REACT_URL = ''
 # Application definition
 
-POSTER_URL = 'http://127.0.0.1:8000'
+POSTER_URL = ''
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -99,6 +99,7 @@ def insertInDatabase(serieName, corpus, lenCorpus):
 			"INSERT INTO recommandation_posting (number, keywords_id, series_id, tf) VALUES ('{0}','{1}','{2}', '{3}')".format(
 				value[0], key_id, serie_id, value[1]))
 	conn.commit()
+	return serie_id
 
 def walk_sub(directory):
 	""" Parcours du dossier de sous titres retourne un dictionnaire"""
