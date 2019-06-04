@@ -33,7 +33,7 @@ def file_processing(filename):
 	zip_obj = zipfile.ZipFile(MEDIA_ROOT[0] + filename, 'r')
 	zip_obj.extractall(MEDIA_ROOT[0])
 	zip_obj.close()
-	management.call_command('load-subtitles', MEDIA_ROOT[0])
+	management.call_command('loadsubtitles', MEDIA_ROOT[0])
 
 	subs = walk_sub(MEDIA_ROOT[0])  # Ne pas oublier le slash a la fin
 	for key, value in subs.items():
