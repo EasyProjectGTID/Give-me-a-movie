@@ -52,13 +52,16 @@ def search(keywords):
     start = time.time()
     dict_res = dict()
     for mot in liste_mots:
-        mot = stemmer.stem(mot)
+        #mot = stemmer.stem(mot)
+        print(mot)
 
-        cur.execute(
-            "SELECT s.id FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE  p.series_id=s.id AND p.keywords_id=k.id AND k.key = '{}'".format(mot))
+        cur.execute("SELECT s.id FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE  p.series_id=s.id AND p.keywords_id=k.id AND k.key = '{}'".format(mot))
+
         liste_series = cur.fetchall()
+        print(liste_series)
         try:
             res_tampon = tfIdf(mot, liste_series)
+
             for key, value in res_tampon.items():
                 if dict_res.get(key):
                     dict_res[key] = dict_res[key] + value

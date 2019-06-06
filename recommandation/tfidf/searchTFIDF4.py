@@ -55,9 +55,10 @@ def search(keywords):
     dict_res = dict()
     for mot in liste_mots:
         mot = stemmer.stem(mot)
+        #print(mot)
 
         cur.execute(
-            "SELECT k.key FROM recommandation_keywords as k WHERE k.key LIKE '{}%'".format(mot))
+            "SELECT k.key FROM recommandation_keywords as k WHERE k.key LIKE '%{}%'".format(mot))
 
         mots = cur.fetchall()
         print(mots)
@@ -83,4 +84,4 @@ def search(keywords):
     print('temps', end - start)
     return sorted(dict_res.items(), key=operator.itemgetter(1), reverse=True)
 
-print(search('medecin chirurgie gallagher'))
+
