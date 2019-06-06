@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
-from recommandation.tfidf.searchTFIDF2 import search
+from recommandation.tfidf.searchTFIDF4 import search
 from recommandation.models import Series, KeyWords, Posting, Rating, Similarity
 from rest_framework.views import APIView
 from PTUT.settings import REACT_URL, POSTER_URL
