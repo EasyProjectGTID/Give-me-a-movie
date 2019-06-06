@@ -44,17 +44,21 @@ def buildVector(seriename, serie1, serie2):
         counter1_c[k[0]] = k[1]
     for k in counter2:
         counter2_c[k[0]] = k[1]
+    #retranscrit tableau contenant id_keword-tfidf  en counter pour les memes données
+
     s1e = time.time()
     print('s1', s1e -s1)
 
     s2 = time.time()
     all_items = set(counter1_c.keys()).union(set(counter2_c.keys()))
+    #all_items= les clés des keywords pour les deux séries en 1 fois
     s2e = time.time()
     print('s2', s2e - s2)
 
     s3 = time.time()
-    vector1 = [float(counter1_c[k]) for k in all_items]
+    vector1 = [float(counter1_c[k]) for k in all_items] #construit les deux vecteurs pour les ids de tous les keywords des dux séries
     vector2 = [float(counter2_c[k]) for k in all_items]
+
     s3e = time.time()
     print('s3', s3e - s3)
 
@@ -65,14 +69,16 @@ cur = conn.cursor()
 cur.execute(
     "select s.id from recommandation_series s where s.name='Arrow2'")
 serie_id = cur.fetchall()[0][0]
+#serie_id= Arrow 2 id
 
 cur.execute(
     "select * from mv_{}".format(serie_id))
 serie_comparer = cur.fetchall()
-
+#serie_comparer = tous les tf-idfs pour tous les mots clés de arrow2
 
 cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
 others = cur.fetchall()
+#others = id de Arrow2
 
 resultat = []
 start = time.time()
@@ -80,9 +86,11 @@ for other in others:
 
     cur.execute("select s.name from recommandation_series s where s.id='{}'".format(other[0]))
     seriename = cur.fetchall()[0][0]
+    #serieName = nom de Arrow2
 
     cur.execute("select * from mv_{}".format(other[0]))
     other_words = cur.fetchall()
+    #other_words = tous les tfs-idfs et la clé référencant le keyword pour Arrow2
 
     seriename, v1, v2 = buildVector(seriename, serie_comparer, other_words)
 
