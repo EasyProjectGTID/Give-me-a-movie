@@ -49,21 +49,26 @@ def construct(serie_pk):
 	cur.execute(
 		"select s.id from recommandation_series s where s.id='{}'".format(serie_pk))
 	serie_id = cur.fetchall()[0][0]
+	#serie_id=serie_pk ?
 
 	cur.execute(
 		"select * from mv_{}".format(serie_id))
 	serie_comparer = cur.fetchall()
+	#serie_comparer = pk des keyword + leurs tfidfs
 
 	cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
 	others = cur.fetchall()
+	#others = les autres id des séries 
 	resultat = []
 
 	for other in others:
 		cur.execute("select s.id from recommandation_series s where s.id='{}'".format(other[0]))
 		serieid = cur.fetchall()[0][0]
+		#serieid=l'id d'une série différente de serie_pk
 
 		cur.execute("select * from mv_{}".format(other[0]))
 		other_words = cur.fetchall()
+		#other_word=pk et tfidfs des mots de other
 
 		sbv = time.time()
 		seriename, v1, v2 = buildVector(serieid, serie_comparer, other_words)
