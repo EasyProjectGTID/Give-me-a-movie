@@ -91,9 +91,9 @@ cur.execute(
 series = cur.fetchall()
 
 start = time.time()
-# for serie in series:
-# 	print(serie[0])
-# 	construct(serie[0])
-#
-# end = time.time()
-# print('tot', end - start)
+ for serie in series:
+ 	print(serie[0])
+ 	construct(serie[0])
+
+ end = time.time()
+ print('tot', end - start)
