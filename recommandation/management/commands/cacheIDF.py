@@ -26,6 +26,7 @@ def lenCollection():
 
 
 def idf(word, lenCol):
+
 	cur.execute(
 		"SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(
 			word))

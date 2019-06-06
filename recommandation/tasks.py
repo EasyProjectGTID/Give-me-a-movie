@@ -65,6 +65,8 @@ def file_processing(filename):
 	conn.commit()
 	print('Refresh des Materializes Views')
 	management.call_command('refreshMatViews')
+	os.system('rm {}'.format(MEDIA_ROOT[0] + filename))
+	os.system('rm -rf {}'.format(MEDIA_ROOT[0] + os.path.splitext(os.path.basename(filename))[0]))
 
 
 def getWords(text):
@@ -148,24 +150,7 @@ def walk_sub(directory):
 	return seriesPath
 
 
-def lenCollection():
-	cur = conn.cursor()
-	cur.execute(
-		"SELECT count(*) FROM recommandation_series as s")
-	lenCollection = cur.fetchall()
-	return lenCollection[0][0]
 
-
-def idf(word):
-	cur = conn.cursor()
-	cur.execute(
-		"SELECT count(s.id) FROM recommandation_keywords as k, recommandation_posting as p, recommandation_series as s WHERE k.key = '{}' AND p.series_id=s.id AND p.keywords_id=k.id".format(
-			word))
-	documentWithTermCount = cur.fetchall()
-	# print('len de la collection', lenCol)
-
-	result = math.log2(lenCollection() / documentWithTermCount[0][0])
-	return result
 
 
 @HUEY.task()
