@@ -46,17 +46,13 @@ def buildVector(seriename, serie1, serie2):
 
 
 def construct(serie_pk):
-	cur.execute(
-		"select s.id from recommandation_series s where s.id='{}'".format(serie_pk))
-	serie_id = cur.fetchall()[0][0]
-	#serie_id=serie_pk ?
 
 	cur.execute(
-		"select * from mv_{}".format(serie_id))
+		"select * from mv_{}".format(serie_pk))
 	serie_comparer = cur.fetchall()
 	#serie_comparer = pk des keyword + leurs tfidfs
 
-	cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_id))
+	cur.execute("select s.id from recommandation_series s where s.id <> '{}'".format(serie_pk))
 	others = cur.fetchall()
 	#others = les autres id des séries 
 	resultat = []
