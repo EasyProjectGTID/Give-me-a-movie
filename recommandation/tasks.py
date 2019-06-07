@@ -11,7 +11,7 @@ import requests
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import unidecode
-from PTUT.settings import DATABASES, API_KEY, STATIC_URL, STATICFILES_DIRS
+from PTUT.settings import DATABASES, API_KEY, STATIC_URL, STATIC_ROOT
 from PTUT import HUEY, MEDIA_ROOT
 from django.core import management
 from recommandation.models import Series
@@ -48,7 +48,7 @@ def file_processing(filename):
 	response = requests.get(new_serie.infos['Poster'])
 
 	if response.status_code == 200:
-		with open(STATICFILES_DIRS[0] + 'posters/' + str(new_serie.name) + '.jpeg', 'wb') as f:
+		with open(STATIC_ROOT + 'posters/' + str(new_serie.name) + '.jpeg', 'wb') as f:
 			f.write(response.content)
 	new_serie.image_local = STATIC_URL + 'posters/' + str(new_serie.name) + '.jpeg'
 	new_serie.save()
@@ -167,7 +167,7 @@ def getInfos(queryset):
 			pass
 
 		if response.status_code == 200:
-			with open(STATICFILES_DIRS[0] + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
+			with open(STATIC_ROOT + 'posters/' + str(serie.name) + '.jpeg', 'wb') as f:
 				f.write(response.content)
 		serie.image_local = STATIC_URL + 'posters/' + str(serie.name) + '.jpeg'
 		serie.save()
