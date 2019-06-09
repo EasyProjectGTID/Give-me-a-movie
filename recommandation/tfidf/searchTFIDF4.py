@@ -16,8 +16,6 @@ def calculTf(word, serie_pk):
     #print('tf',tf)
     return tf[0][0]
 
-
-
 def idf(word):
     cur.execute(
         "SELECT idf FROM recommandation_keywords as k WHERE k.key = '{}'".format(word))
@@ -78,7 +76,6 @@ def search(keywords):
                     dict_res[key] = dict_res[key] + value
                 else:
                     dict_res[key] = value
-
 
     end = time.time()
     print('temps', end - start)
