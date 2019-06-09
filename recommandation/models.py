@@ -67,7 +67,7 @@ class KeyWords(models.Model):
 
 	class Meta:
 		verbose_name = 'Mot'
-		verbose_name_plural = 'Les mots des sous titres'
+		verbose_name_plural = 'Dictionnaire'
 
 
 class Posting(models.Model):

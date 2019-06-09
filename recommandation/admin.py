@@ -146,7 +146,7 @@ class SerieFilter(AutocompleteFilter):
 
 @admin.register(Similarity)
 class SimilarityAdmin(admin.ModelAdmin):
-	search_fields = ['serie']
+	search_fields = ['serie_realname']
 	list_display = ('serie', 'similar_to', 'score')
 	autocomplete_fields = ['serie']
 	# list_filter = ('serie',)
