@@ -58,20 +58,17 @@ def construct(serie_pk):
 	resultat = []
 
 	for other in others:
-		cur.execute("select s.id from recommandation_series s where s.id='{}'".format(other[0]))
-		serieid = cur.fetchall()[0][0]
-		#serieid=l'id d'une série différente de serie_pk
 
 		cur.execute("select * from mv_{}".format(other[0]))
 		other_words = cur.fetchall()
 		#other_word=pk et tfidfs des mots de other
 
 		sbv = time.time()
-		seriename, v1, v2 = buildVector(serieid, serie_comparer, other_words)
+		seriename, v1, v2 = buildVector(other[0], serie_comparer, other_words)
 		ebv = time.time()
 
 		scd = time.time()
-		resultat.append(cosine_distance(serieid, v1, v2))
+		resultat.append(cosine_distance(other[0], v1, v2))
 		ecd = time.time()
 
 	resultat_trier = sorted(resultat, key=operator.itemgetter(1), reverse=True)
