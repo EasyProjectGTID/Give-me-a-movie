@@ -3,7 +3,7 @@ import json
 import os
 
 from django.db.models import Sum, Count
-from django.urls import resolve
+from django.urls import resolve, reverse
 from pygments import highlight
 from pygments.lexers import JsonLexer
 from pygments.formatters import HtmlFormatter
@@ -20,10 +20,12 @@ from recommandation.tasks import file_processing
 from .models import Series, KeyWords, Posting, Rating, SearchCount, Similarity
 from admin_auto_filters.filters import AutocompleteFilter
 
+
 def getInformations(model, request, queryset):
 	getInfos(queryset)
-getInformations.short_description = "Télécharger les informations complémentaires pour les series selectionnées"
 
+
+getInformations.short_description = "Télécharger les informations complémentaires pour les series selectionnées"
 
 
 def export_csv(self, request, queryset):
@@ -111,7 +113,7 @@ class RatingAdmin(admin.ModelAdmin):
 	actions = [export_csv]
 	list_display = ('serie', 'rating', 'user', 'date_vote')
 	autocomplete_fields = ['user']
-	list_filter = ('rating','serie', 'user')
+	list_filter = ('rating', 'serie', 'user')
 
 
 @admin.register(KeyWords)
@@ -126,6 +128,7 @@ class SeriesFilter(AutocompleteFilter):
 	title = 'Serie'  # display title
 	field_name = 'series'  # name of the foreign key field
 
+
 @admin.register(Posting)
 class PostingAdmin(admin.ModelAdmin):
 	list_display = ('keywords', 'number', 'tf', 'series')
@@ -135,6 +138,7 @@ class PostingAdmin(admin.ModelAdmin):
 	list_filter = [SeriesFilter]
 
 	actions = [export_csv]
+
 	class Media:
 		pass
 
@@ -154,3 +158,15 @@ class SimilarityAdmin(admin.ModelAdmin):
 
 	class Media:
 		pass
+
+
+
+from django.contrib.admin.models import LogEntry
+
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message')
+    list_filter = ('content_type',)
+    search_fields = ['user__username',]
+    date_hierarchy = 'action_time'
+
+admin.site.register(LogEntry, LogEntryAdmin)
