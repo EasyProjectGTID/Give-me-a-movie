@@ -27,7 +27,7 @@ def cosine_distance(serie_id, u, v):
 	return serie_id, 100*(numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v))))
 
 
-def buildVector(seriename, serie1, serie2):
+def buildVector(seriepk, serie1, serie2):
 	counter1 = serie1
 	counter2 = serie2
 
@@ -64,7 +64,7 @@ def construct(serie_pk):
 		#other_word=pk et tfidfs des mots de other
 
 		sbv = time.time()
-		seriename, v1, v2 = buildVector(other[0], serie_comparer, other_words)
+		seriepk, v1, v2 = buildVector(other[0], serie_comparer, other_words)
 		ebv = time.time()
 
 		scd = time.time()
