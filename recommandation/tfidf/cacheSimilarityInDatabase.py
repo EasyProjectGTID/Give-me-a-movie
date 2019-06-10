@@ -75,8 +75,8 @@ def construct(serie_pk):
 	print(resultat_trier)
 	# r.set(serie_pk, pickle.dumps(resultat_trier))
 	for res in resultat_trier:
-		cur.execute("INSERT INTO recommandation_similarity (serie_id, similar_to_id, score) VALUES ('{0}', '{1}', '{2}')".format(serie_pk, res[0], res[1]))
-
+		cur.execute("INSERT INTO recommandation_similarity (serie_id, similar_to_id, score)"
+			   + "VALUES ('{0}', '{1}', '{2}')".format(serie_pk, res[0], res[1]))
 	conn.commit()
 cur = conn.cursor()
 cur.execute(
